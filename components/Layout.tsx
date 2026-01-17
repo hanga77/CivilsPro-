@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { SiteConfig } from '../types';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -7,109 +8,132 @@ interface LayoutProps {
   setActiveTab: (tab: string) => void;
   isAdmin: boolean;
   setIsAdmin: (val: boolean) => void;
+  config: SiteConfig;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, isAdmin, setIsAdmin }) => {
+const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, isAdmin, setIsAdmin, config }) => {
   const LogoIcon = () => (
-    <div className="relative w-12 h-12 bg-white rounded-lg flex items-center justify-center border-2 border-[#0033AD] shadow-inner overflow-hidden">
-       <div className="absolute top-1 left-1 opacity-20"><i className="fas fa-cog text-[10px] text-[#0033AD]"></i></div>
-       <span className="text-2xl font-serif font-bold text-slate-900 mt-[-4px]">π</span>
-       <div className="absolute bottom-1 right-1 h-[2px] w-4 bg-[#0033AD]"></div>
+    <div className="relative w-12 h-12 bg-white rounded-xl flex items-center justify-center border-b-4 shadow-xl overflow-hidden transition-all group-hover:scale-110" style={{ borderBottomColor: config.accentColor }}>
+       {config.logoUrl ? (
+         <img src={config.logoUrl} alt="Logo" className="w-full h-full object-contain p-2" />
+       ) : (
+         <div className="flex flex-col items-center">
+          <span className="text-2xl font-black text-slate-900 leading-none">π</span>
+          <div className="h-1 w-4 rounded-full mt-0.5" style={{ backgroundColor: config.accentColor }}></div>
+         </div>
+       )}
     </div>
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0f172a]">
-      <div className="fixed top-6 left-0 right-0 z-[100] px-6">
-        <nav className="max-w-7xl mx-auto bg-slate-900/80 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl px-6 py-3 flex justify-between items-center">
+    <div className="min-h-screen flex flex-col bg-[#020617] text-slate-200 selection:bg-blue-500/30">
+      {/* Grille technique en background */}
+      <div className="fixed inset-0 z-0 pointer-events-none opacity-[0.03]" 
+           style={{ backgroundImage: `linear-gradient(${config.accentColor} 1px, transparent 1px), linear-gradient(90deg, ${config.accentColor} 1px, transparent 1px)`, backgroundSize: '40px 40px' }}>
+      </div>
+
+      <header className="fixed top-0 left-0 right-0 z-[100] p-4 md:p-6">
+        <nav className="max-w-7xl mx-auto bg-slate-950/40 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-2xl px-6 py-3 flex justify-between items-center overflow-hidden">
           <div 
             className="flex items-center space-x-4 cursor-pointer group" 
             onClick={() => setActiveTab('home')}
           >
             <LogoIcon />
-            <div className="flex flex-col leading-none">
-              <span className="text-xl font-black tracking-tighter text-white group-hover:text-blue-500 transition-colors">
-                PI-<span className="text-blue-600 italic">CONSTRUCTION</span>
+            <div className="flex flex-col">
+              <span className="text-xl font-black tracking-tighter text-white leading-none">
+                {config.companyName}<span style={{ color: config.accentColor }}>+</span>
               </span>
-              <span className="text-[8px] font-black tracking-[0.3em] text-slate-500 mt-1 uppercase">BTP SARL • CAMEROUN</span>
+              <span className="text-[7px] font-black tracking-[0.4em] text-slate-500 uppercase mt-1">Génie Civil & Ingénierie</span>
             </div>
           </div>
           
-          <div className="hidden md:flex items-center space-x-1 bg-white/5 rounded-2xl p-1 border border-white/5">
+          <div className="hidden lg:flex items-center space-x-1">
             {[
-              { id: 'home', label: 'ACCUEIL' },
-              { id: 'projects', label: 'CHANTIERS' },
-              { id: 'gallery', label: 'GALERIE' },
-              { id: 'rentals', label: 'LOCATION' },
-              { id: 'admin', label: 'GESTION' }
+              { id: 'home', label: 'ACCUEIL', icon: 'fa-house' },
+              { id: 'projects', label: 'EXPERTISE', icon: 'fa-compass-drafting' },
+              { id: 'gallery', label: 'RÉALISATIONS', icon: 'fa-helmet-safety' },
+              { id: 'rentals', label: 'LOCATION', icon: 'fa-truck-pickup' },
+              { id: 'admin', label: 'CONSOLE', icon: 'fa-shield-halved' }
             ].map((tab) => (
               <button 
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-5 py-2 rounded-xl text-[10px] font-bold tracking-[0.2em] transition-all ${
+                className={`group flex items-center space-x-2 px-5 py-2.5 rounded-xl text-[10px] font-black tracking-widest transition-all ${
                   activeTab === tab.id 
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
+                    ? 'text-white shadow-inner' 
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                 }`}
+                style={activeTab === tab.id ? { backgroundColor: `${config.accentColor}22`, border: `1px solid ${config.accentColor}44` } : {}}
               >
-                {tab.label}
+                <i className={`fas ${tab.icon} text-[10px] opacity-50 group-hover:opacity-100`}></i>
+                <span>{tab.label}</span>
               </button>
             ))}
           </div>
 
           <div className="flex items-center space-x-4">
-            <button 
-              onClick={() => setIsAdmin(!isAdmin)}
-              className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all border ${
-                isAdmin 
-                  ? 'bg-transparent border-blue-500 text-blue-500' 
-                  : 'bg-white text-slate-900 border-white hover:bg-blue-50'
-              }`}
-            >
-              {isAdmin ? 'ADMIN' : 'PRO'}
-            </button>
+            <a href={`tel:${config.contactPhones[0]}`} className="hidden md:flex items-center space-x-3 bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-xl transition-all">
+               <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: config.accentColor }}></div>
+               <span className="text-[10px] font-black text-white">{config.contactPhones[0]}</span>
+            </a>
           </div>
         </nav>
-      </div>
+      </header>
 
-      <main className="flex-grow">
+      <main className="flex-grow relative z-10">
         {children}
       </main>
 
-      <footer className="bg-slate-950/80 pt-24 pb-12 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-16 mb-16">
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-4 mb-8">
-              <LogoIcon />
-              <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase">Pi-Construction.</h3>
-            </div>
-            <p className="text-slate-400 text-base leading-relaxed max-w-sm font-light">
-              Expertise BTP au Cameroun. Équipes mobiles hautement qualifiées pour l'excellence opérationnelle.
+      <footer className="relative z-10 bg-slate-950 pt-32 pb-12 border-t border-white/5 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 blur-[120px] opacity-10 rounded-full" style={{ backgroundColor: config.accentColor }}></div>
+        
+        <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-20">
+          <div className="md:col-span-2">
+            <h2 className="text-4xl font-black text-white italic tracking-tighter mb-6 uppercase">
+              Bâtir avec <span style={{ color: config.accentColor }}>Rigueur.</span>
+            </h2>
+            <p className="text-slate-400 text-sm leading-relaxed max-w-md font-medium">
+              Nous transformons les défis techniques en succès durables. {config.companyName} est le partenaire stratégique des infrastructures de demain au Cameroun.
             </p>
-          </div>
-          <div>
-            <h4 className="text-[10px] font-black text-blue-500 tracking-[0.3em] uppercase mb-8">Nous Joindre</h4>
-            <div className="space-y-4 text-sm text-slate-400">
-              <p className="flex items-center space-x-3">
-                <i className="fas fa-phone text-blue-600"></i>
-                <span className="text-white font-bold tracking-wider">(+237) 671 34 54 41</span>
-              </p>
-              <p className="flex items-center space-x-3">
-                <i className="fas fa-phone text-blue-600"></i>
-                <span className="text-white font-bold tracking-wider">(+237) 699 46 63 21</span>
-              </p>
+            <div className="flex space-x-4 mt-8">
+               {['facebook', 'linkedin', 'instagram'].map(social => (
+                 <a key={social} href="#" className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/10 border border-white/5 transition-all">
+                    <i className={`fab fa-${social}`}></i>
+                 </a>
+               ))}
             </div>
           </div>
+          
           <div>
-            <h4 className="text-[10px] font-black text-blue-500 tracking-[0.3em] uppercase mb-8">Zone d'Action</h4>
-            <p className="text-sm text-slate-500 font-medium">
-              Douala (Base)<br/>
-              Déploiement National (Cameroun)
+            <h4 className="text-[9px] font-black tracking-[0.4em] uppercase mb-8 opacity-40">Contact Technique</h4>
+            <div className="space-y-6">
+              {config.contactPhones.map((phone, idx) => (
+                <div key={idx} className="group">
+                  <p className="text-[9px] text-slate-500 font-black mb-1">LIGNE {idx + 1}</p>
+                  <p className="text-white font-bold tracking-tighter text-lg">{phone}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-[9px] font-black tracking-[0.4em] uppercase mb-8 opacity-40">Siège Social</h4>
+            <p className="text-slate-300 font-bold leading-relaxed">
+              {config.contactLocation}
             </p>
+            <button className="mt-6 flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest py-2 border-b-2" style={{ borderColor: config.accentColor, color: config.accentColor }}>
+              <span>Nous localiser</span>
+              <i className="fas fa-arrow-right"></i>
+            </button>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-8 pt-8 border-t border-white/5 opacity-40 text-[9px] font-bold tracking-[0.3em] uppercase">
-          <p>© {new Date().getFullYear()} PI-CONSTRUCTION BTP SARL.</p>
+        
+        <div className="max-w-7xl mx-auto px-8 mt-24 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[8px] font-black tracking-[0.3em] uppercase opacity-40">
+          <p>© {new Date().getFullYear()} {config.companyName} {config.companySuffix} GROUP. TOUS DROITS RÉSERVÉS.</p>
+          <div className="flex space-x-8">
+            <a href="#">Politique de sécurité</a>
+            <a href="#">Mentions Légales</a>
+          </div>
         </div>
       </footer>
     </div>

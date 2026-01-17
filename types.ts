@@ -33,6 +33,17 @@ export interface RentalItem {
   desc?: string;
 }
 
+export interface SiteConfig {
+  companyName: string;
+  companySuffix: string;
+  slogan: string;
+  logoUrl: string; // Si vide, utilise le symbole pi
+  accentColor: string;
+  heroImage: string;
+  contactPhones: string[];
+  contactLocation: string;
+}
+
 export interface User {
   id: string;
   name: string;

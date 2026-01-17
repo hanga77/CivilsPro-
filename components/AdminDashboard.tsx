@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Project, ProjectStatus, GalleryItem, RentalItem } from '../types';
+import { Project, ProjectStatus, GalleryItem, RentalItem, SiteConfig } from '../types';
 
 interface AdminDashboardProps {
   projects: Project[];
@@ -9,11 +9,13 @@ interface AdminDashboardProps {
   setGallery: React.Dispatch<React.SetStateAction<GalleryItem[]>>;
   rentals: RentalItem[];
   setRentals: React.Dispatch<React.SetStateAction<RentalItem[]>>;
+  config: SiteConfig;
+  setConfig: React.Dispatch<React.SetStateAction<SiteConfig>>;
   logout: () => void;
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ projects, setProjects, gallery, setGallery, rentals, setRentals, logout }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'projects' | 'gallery' | 'rentals'>('projects');
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ projects, setProjects, gallery, setGallery, rentals, setRentals, config, setConfig, logout }) => {
+  const [activeSubTab, setActiveSubTab] = useState<'projects' | 'gallery' | 'rentals' | 'settings'>('projects');
   const [isAdding, setIsAdding] = useState(false);
   const [newItem, setNewItem] = useState<any>({
     name: '',
@@ -74,22 +76,33 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ projects, setProjects, 
     setNewItem({ name: '', budget: '', status: ProjectStatus.PLANNING, title: '', category: 'Bâtiment', price: '', desc: '', icon: 'fa-kaaba', url: '' });
   };
 
+  const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    if (name === 'contactPhones') {
+      setConfig(prev => ({ ...prev, contactPhones: value.split(',').map(s => s.trim()) }));
+    } else {
+      setConfig(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
   return (
     <div className="p-12 max-w-7xl mx-auto animate-fadeIn pt-32 min-h-screen">
       <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
         <div>
-          <span className="text-blue-500 font-black tracking-[0.4em] text-[10px] uppercase mb-2 block">Système de Gestion Intégré</span>
-          <h1 className="text-5xl font-black text-white tracking-tighter italic uppercase">CONSOLE ADMIN.</h1>
-          <div className="flex space-x-6 mt-6">
+          <span className="font-black tracking-[0.4em] text-[10px] uppercase mb-2 block" style={{ color: config.accentColor }}>Plateforme Master-Admin</span>
+          <h1 className="text-5xl font-black text-white tracking-tighter italic uppercase">Console Système.</h1>
+          <div className="flex flex-wrap gap-6 mt-6">
             {[
               { id: 'projects', label: 'Chantiers', icon: 'fa-helmet-safety' },
               { id: 'gallery', label: 'Galerie', icon: 'fa-images' },
-              { id: 'rentals', label: 'Location', icon: 'fa-truck-ramp-box' }
+              { id: 'rentals', label: 'Location', icon: 'fa-truck-ramp-box' },
+              { id: 'settings', label: 'Identité Visuelle', icon: 'fa-palette' }
             ].map((tab) => (
               <button 
                 key={tab.id}
                 onClick={() => setActiveSubTab(tab.id as any)} 
-                className={`flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest pb-3 border-b-2 transition-all ${activeSubTab === tab.id ? 'border-blue-600 text-white' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                className={`flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest pb-3 border-b-2 transition-all ${activeSubTab === tab.id ? 'text-white' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+                style={activeSubTab === tab.id ? { borderColor: config.accentColor } : {}}
               >
                 <i className={`fas ${tab.icon}`}></i>
                 <span>{tab.label}</span>
@@ -98,9 +111,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ projects, setProjects, 
           </div>
         </div>
         <div className="flex space-x-4">
-          <button onClick={() => setIsAdding(true)} className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-blue-600/20 hover:bg-blue-500 transition-all">
-            <i className="fas fa-plus mr-2"></i> AJOUTER {activeSubTab === 'projects' ? 'CHANTIER' : activeSubTab === 'gallery' ? 'IMAGE' : 'MATÉRIEL'}
-          </button>
+          {activeSubTab !== 'settings' && (
+            <button onClick={() => setIsAdding(true)} className="text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl hover:opacity-90 transition-all" style={{ backgroundColor: config.accentColor, boxShadow: `0 10px 15px -3px ${config.accentColor}44` }}>
+              <i className="fas fa-plus mr-2"></i> AJOUTER {activeSubTab === 'projects' ? 'CHANTIER' : activeSubTab === 'gallery' ? 'IMAGE' : 'MATÉRIEL'}
+            </button>
+          )}
           <button onClick={logout} className="bg-slate-800 text-slate-400 border border-white/5 px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">
             <i className="fas fa-power-off mr-2"></i> SORTIR
           </button>
@@ -120,10 +135,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ projects, setProjects, 
             </thead>
             <tbody className="divide-y divide-white/5">
               {projects.map(p => (
-                <tr key={p.id} className="hover:bg-blue-600/5 transition-all">
+                <tr key={p.id} className="hover:bg-white/5 transition-all">
                   <td className="px-10 py-6 text-sm font-bold text-white uppercase italic">{p.name}</td>
                   <td className="px-10 py-6">
-                    <span className="bg-blue-600/10 text-blue-500 text-[10px] font-black px-3 py-1 rounded-md uppercase border border-blue-500/20">{p.status}</span>
+                    <span className="text-[10px] font-black px-3 py-1 rounded-md uppercase border" style={{ color: config.accentColor, borderColor: `${config.accentColor}44`, backgroundColor: `${config.accentColor}11` }}>{p.status}</span>
                   </td>
                   <td className="px-10 py-6 text-sm font-black text-white">{p.budget.toLocaleString()}</td>
                   <td className="px-10 py-6 text-right">
@@ -135,6 +150,71 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ projects, setProjects, 
           </table>
         )}
 
+        {activeSubTab === 'settings' && (
+          <div className="p-12 space-y-12 animate-fadeIn">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <div className="space-y-6">
+                <h3 className="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em]">Branding & Identité</h3>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[9px] text-slate-500 uppercase font-black ml-2 mb-2 block tracking-widest">Nom Entreprise</label>
+                      <input name="companyName" value={config.companyName} onChange={handleConfigChange} className="w-full bg-slate-950 border border-white/5 rounded-xl p-4 text-white font-bold outline-none focus:border-blue-500" />
+                    </div>
+                    <div>
+                      <label className="text-[9px] text-slate-500 uppercase font-black ml-2 mb-2 block tracking-widest">Suffixe (BTP...)</label>
+                      <input name="companySuffix" value={config.companySuffix} onChange={handleConfigChange} className="w-full bg-slate-950 border border-white/5 rounded-xl p-4 text-white font-bold outline-none focus:border-blue-500" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[9px] text-slate-500 uppercase font-black ml-2 mb-2 block tracking-widest">Logo (URL Image ou vide pour π)</label>
+                    <input name="logoUrl" value={config.logoUrl} onChange={handleConfigChange} placeholder="Ex: https://image.com/logo.png" className="w-full bg-slate-950 border border-white/5 rounded-xl p-4 text-white font-bold outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-[9px] text-slate-500 uppercase font-black ml-2 mb-2 block tracking-widest">Couleur d'accentuation (Hex)</label>
+                    <div className="flex gap-4">
+                      <input name="accentColor" type="color" value={config.accentColor} onChange={handleConfigChange} className="h-14 w-14 rounded-xl bg-slate-950 border border-white/5 overflow-hidden cursor-pointer" />
+                      <input name="accentColor" value={config.accentColor} onChange={handleConfigChange} className="flex-1 bg-slate-950 border border-white/5 rounded-xl p-4 text-white font-mono" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <h3 className="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em]">Médias & Hero</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-[9px] text-slate-500 uppercase font-black ml-2 mb-2 block tracking-widest">Slogan Principal</label>
+                    <input name="slogan" value={config.slogan} onChange={handleConfigChange} className="w-full bg-slate-950 border border-white/5 rounded-xl p-4 text-white font-bold" />
+                  </div>
+                  <div>
+                    <label className="text-[9px] text-slate-500 uppercase font-black ml-2 mb-2 block tracking-widest">Image de Fond (Accueil)</label>
+                    <input name="heroImage" value={config.heroImage} onChange={handleConfigChange} className="w-full bg-slate-950 border border-white/5 rounded-xl p-4 text-white font-bold" />
+                    <div className="mt-2 h-24 rounded-xl overflow-hidden border border-white/5">
+                      <img src={config.heroImage} className="w-full h-full object-cover" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="md:col-span-2 space-y-6 border-t border-white/5 pt-12">
+                <h3 className="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em]">Coordonnées (Footer)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <label className="text-[9px] text-slate-500 uppercase font-black ml-2 mb-2 block tracking-widest">Téléphones (séparés par une virgule)</label>
+                    <input name="contactPhones" value={config.contactPhones.join(', ')} onChange={handleConfigChange} className="w-full bg-slate-950 border border-white/5 rounded-xl p-4 text-white font-bold" />
+                  </div>
+                  <div>
+                    <label className="text-[9px] text-slate-500 uppercase font-black ml-2 mb-2 block tracking-widest">Localisation & Siège</label>
+                    <textarea name="contactLocation" value={config.contactLocation} onChange={handleConfigChange} className="w-full bg-slate-950 border border-white/5 rounded-xl p-4 text-white font-bold min-h-[100px]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ... Autres tableaux (gallery, rentals) conservés tels quels ... */}
         {activeSubTab === 'gallery' && (
           <div className="p-12 grid grid-cols-2 md:grid-cols-4 gap-8">
             {gallery.map(item => (
@@ -146,7 +226,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ projects, setProjects, 
                    </button>
                 </div>
                 <div className="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-slate-950">
-                  <p className="text-[9px] text-blue-500 font-black uppercase tracking-widest">{item.category}</p>
+                  <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: config.accentColor }}>{item.category}</p>
                   <p className="text-xs font-bold text-white uppercase italic truncate">{item.title}</p>
                 </div>
               </div>
@@ -161,12 +241,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ projects, setProjects, 
                 <button onClick={() => handleDelete('rentals', item.id)} className="absolute top-6 right-6 text-slate-700 hover:text-red-500 transition-all">
                   <i className="fas fa-trash-can text-sm"></i>
                 </button>
-                <div className="w-16 h-16 bg-blue-600/10 text-blue-500 rounded-2xl flex items-center justify-center mb-6">
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: `${config.accentColor}22`, color: config.accentColor }}>
                   <i className={`fas ${item.icon} text-2xl`}></i>
                 </div>
                 <h4 className="text-xl font-black text-white uppercase italic mb-3">{item.name}</h4>
                 <p className="text-slate-500 text-xs font-light mb-6 leading-relaxed italic">"{item.desc}"</p>
-                <div className="text-blue-400 font-black tracking-widest uppercase text-xs">{item.price}</div>
+                <div className="font-black tracking-widest uppercase text-xs" style={{ color: config.accentColor }}>{item.price}</div>
               </div>
             ))}
           </div>
@@ -176,9 +256,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ projects, setProjects, 
       {isAdding && (
         <div className="fixed inset-0 bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center z-[200] p-6 animate-fadeIn">
           <div className="bg-slate-900 border border-white/10 rounded-[4rem] w-full max-w-2xl overflow-hidden shadow-3xl">
-            <div className="p-10 bg-blue-600/10 border-b border-white/5 flex justify-between items-center">
+            <div className="p-10 border-b border-white/5 flex justify-between items-center" style={{ backgroundColor: `${config.accentColor}11` }}>
               <div>
-                <span className="text-blue-500 font-black text-[9px] uppercase tracking-[0.3em] block mb-2">Ajout de contenu</span>
+                <span className="font-black text-[9px] uppercase tracking-[0.3em] block mb-2" style={{ color: config.accentColor }}>Ajout de contenu</span>
                 <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">Nouveau {activeSubTab === 'projects' ? 'Chantier' : activeSubTab === 'gallery' ? 'Réalisation' : 'Matériel'}</h2>
               </div>
               <button onClick={() => setIsAdding(false)} className="w-12 h-12 rounded-full bg-white/5 text-slate-400 hover:text-white transition-all flex items-center justify-center">
@@ -249,7 +329,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ projects, setProjects, 
                 </div>
               )}
 
-              <button type="submit" className="w-full bg-blue-600 text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.3em] shadow-2xl shadow-blue-600/40 hover:bg-blue-500 transition-all hover:scale-[1.02] active:scale-95">
+              <button type="submit" className="w-full text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.3em] shadow-2xl transition-all hover:scale-[1.02] active:scale-95" style={{ backgroundColor: config.accentColor }}>
                 ENREGISTRER DANS LA BASE DE DONNÉES
               </button>
             </form>
