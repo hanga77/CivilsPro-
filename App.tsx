@@ -30,8 +30,11 @@ const App: React.FC = () => {
   
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([
     { id: '1', category: 'Ingénierie', url: 'https://images.unsplash.com/photo-1581094794329-c8112a4e5190?auto=format&fit=crop&q=80&w=800', title: 'Bureau d\'études mobile' },
-    { id: '2', category: 'Expertise', url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=800', title: 'Personnel Qualifié en Action' },
-    { id: '3', category: 'Technique', url: 'https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=800', title: 'Mise en œuvre flexible' },
+    { id: '2', category: 'Matériel', url: 'https://images.unsplash.com/photo-1579362391512-972109869389?auto=format&fit=crop&q=80&w=800', title: 'Équipements de pointe' },
+    { id: '3', category: 'Chantier', url: 'https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=800', title: 'Mise en œuvre agile' },
+    { id: '4', category: 'Ingénierie', url: 'https://images.unsplash.com/photo-1503387762-592dee58c460?auto=format&fit=crop&q=80&w=800', title: 'Calculs de structures' },
+    { id: '5', category: 'Matériel', url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=800', title: 'Logistique réactive' },
+    { id: '6', category: 'Chantier', url: 'https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?auto=format&fit=crop&q=80&w=800', title: 'Expertise terrain' },
   ]);
 
   const [rentalItems, setRentalItems] = useState<RentalItem[]>([
@@ -70,7 +73,7 @@ const App: React.FC = () => {
                   </p>
                   <div className="flex flex-wrap gap-4">
                     <button onClick={() => setActiveTab('projects')} className="px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-2xl transition-all hover:scale-105" style={{ backgroundColor: siteConfig.accentColor, color: '#000' }}>NOS SERVICES PRO</button>
-                    <button onClick={() => setActiveTab('rentals')} className="bg-white/5 text-white border border-white/10 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-white/10">ÉQUIPEMENTS DE POINTE</button>
+                    <button onClick={() => setActiveTab('gallery')} className="bg-white/5 text-white border border-white/10 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-white/10">VOIR LA GALERIE</button>
                   </div>
                 </div>
                 <div className="lg:col-span-5 relative h-[650px] rounded-[4rem] overflow-hidden border border-white/5 shadow-3xl">
@@ -105,6 +108,30 @@ const App: React.FC = () => {
                 ))}
               </div>
             </section>
+          </div>
+        )}
+
+        {activeTab === 'gallery' && (
+          <div className="px-6 max-w-7xl mx-auto animate-fadeIn">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+              <div>
+                <span className="font-black text-[10px] uppercase tracking-[0.4em]" style={{ color: siteConfig.accentColor }}>Preuves en images</span>
+                <h2 className="text-6xl font-black text-white italic uppercase tracking-tighter leading-none mt-2">NOTRE GALERIE <br/><span style={{ color: siteConfig.accentColor }}>TECHNIQUE</span></h2>
+              </div>
+              <p className="text-slate-500 max-w-sm text-sm italic">"Chaque cliché témoigne de la rigueur de nos experts qualifiés et de la performance de nos équipements modernes."</p>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {galleryItems.map((item) => (
+                <div key={item.id} className="group relative aspect-[4/5] rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl">
+                  <img src={item.url} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-10">
+                    <span className="text-[9px] font-black uppercase tracking-[0.3em] mb-2" style={{ color: siteConfig.accentColor }}>{item.category}</span>
+                    <h4 className="text-white text-xl font-black uppercase italic tracking-tighter">{item.title}</h4>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
