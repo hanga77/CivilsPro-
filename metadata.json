@@ -1,0 +1,8 @@
+{
+  "name": "CivilsPro - Plateforme Génie Civil",
+  "description": "Une plateforme professionnelle complète pour la gestion de projets de génie civil, incluant un tableau de bord administratif, le suivi de chantiers et la génération de rapports via IA.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
