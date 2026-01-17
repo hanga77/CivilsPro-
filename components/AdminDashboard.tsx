@@ -17,225 +17,211 @@ interface AdminDashboardProps {
   logout: () => void;
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ projects, setProjects, gallery, setGallery, rentals, setRentals, messages, setMessages, config, setConfig, logout }) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ 
+  projects, setProjects, gallery, setGallery, rentals, setRentals, 
+  messages, setMessages, config, setConfig, logout 
+}) => {
   const [activeSubTab, setActiveSubTab] = useState<'projects' | 'gallery' | 'rentals' | 'messages' | 'settings'>('projects');
-  const [isAdding, setIsAdding] = useState(false);
-  const [generatingReportId, setGeneratingReportId] = useState<string | null>(null);
-  const [aiReport, setAiReport] = useState<{ id: string, text: string } | null>(null);
   
-  const [newItem, setNewItem] = useState<any>({
-    name: '', budget: '', title: '', category: 'Ingénierie', price: 'Sur Devis', desc: '', icon: 'fa-kaaba', url: ''
-  });
+  // États pour la création/édition
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const [newItem, setNewItem] = useState<any>({});
 
   const stats = {
     totalBudget: projects.reduce((acc, p) => acc + p.budget, 0),
-    activeProjects: projects.filter(p => p.status === ProjectStatus.IN_PROGRESS).length,
-    unreadMessages: messages.filter(m => !m.isRead).length,
-    itemsCount: gallery.length + rentals.length
-  };
-
-  const handleAiReport = async (project: Project) => {
-    setGeneratingReportId(project.id);
-    const dataString = `Projet: ${project.name}, Client: ${project.client}, Budget: ${project.budget} FCFA, Progrès: ${project.progress}%, Statut: ${project.status}`;
-    const report = await generateSiteSummary(dataString);
-    setAiReport({ id: project.id, text: report });
-    setGeneratingReportId(null);
+    activeCount: projects.length,
+    unreadMessages: messages.filter(m => !m.isRead).length
   };
 
   const handleDelete = (type: string, id: string) => {
-    if (!confirm('Confirmer la suppression ?')) return;
+    if (!confirm('Supprimer définitivement ?')) return;
     if (type === 'projects') setProjects(prev => prev.filter(p => p.id !== id));
     if (type === 'gallery') setGallery(prev => prev.filter(p => p.id !== id));
     if (type === 'rentals') setRentals(prev => prev.filter(p => p.id !== id));
-    if (type === 'messages') setMessages(prev => prev.filter(m => m.id !== id));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleEdit = (item: any) => {
+    setEditingItem(item);
+    setNewItem({ ...item });
+    setIsModalOpen(true);
+  };
+
+  const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    const id = Date.now().toString();
     if (activeSubTab === 'projects') {
-      setProjects(prev => [...prev, { 
-        id, 
-        name: newItem.name || 'Nouveau Projet', 
-        budget: Number(newItem.budget) || 0, 
-        status: ProjectStatus.PLANNING, 
-        progress: 0, 
-        startDate: new Date().toISOString(), 
-        thumbnail: newItem.url || 'https://images.unsplash.com/photo-1541888946425-d81bb19480c5', 
-        location: 'Cameroun', 
-        client: 'Client Privé' 
-      }]);
+      if (editingItem) {
+        setProjects(prev => prev.map(p => p.id === editingItem.id ? { ...p, ...newItem } : p));
+      } else {
+        setProjects(prev => [...prev, { ...newItem, id: Date.now().toString(), status: ProjectStatus.PLANNING, progress: 0 }]);
+      }
     } else if (activeSubTab === 'gallery') {
-      setGallery(prev => [...prev, { id, title: newItem.title || 'Sans titre', category: newItem.category, url: newItem.url }]);
+      if (editingItem) {
+        setGallery(prev => prev.map(g => g.id === editingItem.id ? { ...g, ...newItem } : g));
+      } else {
+        setGallery(prev => [...prev, { ...newItem, id: Date.now().toString() }]);
+      }
     } else if (activeSubTab === 'rentals') {
-      setRentals(prev => [...prev, { id, name: newItem.name, icon: newItem.icon, price: newItem.price, desc: newItem.desc }]);
+      if (editingItem) {
+        setRentals(prev => prev.map(r => r.id === editingItem.id ? { ...r, ...newItem } : r));
+      } else {
+        setRentals(prev => [...prev, { ...newItem, id: Date.now().toString() }]);
+      }
     }
-    setIsAdding(false);
-    setNewItem({ name: '', budget: '', title: '', category: 'Ingénierie', price: 'Sur Devis', desc: '', icon: 'fa-kaaba', url: '' });
+    setIsModalOpen(false);
+    setEditingItem(null);
   };
 
   return (
-    <div className="w-full animate-fadeIn min-h-screen">
-      {/* KPIs Grid - 2 cols mobile, 4 cols desktop */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8 md:mb-10">
-        {[
-          { label: "Budgets", val: `${(stats.totalBudget / 1000000).toFixed(1)}M`, icon: "fa-sack-dollar", color: config.accentColor },
-          { label: "Messages", val: stats.unreadMessages, icon: "fa-envelope-open-text", color: "#3b82f6" },
-          { label: "En cours", val: stats.activeProjects, icon: "fa-person-digging", color: "#10b981" },
-          { label: "Actifs Site", val: stats.itemsCount, icon: "fa-layer-group", color: "#8b5cf6" }
-        ].map((stat, i) => (
-          <div key={i} className="bg-slate-900/60 border border-white/5 p-4 md:p-5 rounded-2xl md:rounded-3xl shadow-xl">
-            <div className="flex items-center justify-between mb-2">
-              <i className={`fas ${stat.icon} text-sm md:text-lg`} style={{ color: stat.color }}></i>
-              <span className="text-[7px] md:text-[8px] font-black text-slate-500 uppercase tracking-tighter">{stat.label}</span>
-            </div>
-            <p className="text-xl md:text-3xl font-black text-white italic">{stat.val}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex flex-col md:flex-row justify-between items-center mb-8 md:mb-10 gap-6">
-        <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-white tracking-tighter italic uppercase text-center md:text-left">ADMIN<span style={{ color: config.accentColor }}>ISTRATION.</span></h1>
-        <div className="flex w-full md:w-auto gap-3">
-          {activeSubTab !== 'messages' && activeSubTab !== 'settings' && (
-            <button onClick={() => setIsAdding(true)} className="flex-1 md:flex-none bg-white text-black px-6 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:scale-105 transition-transform">AJOUTER</button>
-          )}
-          <button onClick={logout} className="flex-1 md:flex-none bg-red-500/10 text-red-500 border border-red-500/20 px-6 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest">QUITTER</button>
+    <div className="w-full animate-fadeIn">
+      {/* HEADER DASHBOARD */}
+      <div className="flex justify-between items-center mb-12">
+        <h1 className="text-4xl font-black italic uppercase text-white">Station <span style={{ color: config.accentColor }}>Commandement.</span></h1>
+        <div className="flex gap-4">
+           {activeSubTab !== 'messages' && activeSubTab !== 'settings' && (
+             <button onClick={() => { setEditingItem(null); setNewItem({}); setIsModalOpen(true); }} className="px-8 py-3 bg-white text-black font-black uppercase text-[10px] rounded-xl">Ajouter Élément</button>
+           )}
+           <button onClick={logout} className="px-8 py-3 bg-red-500/10 text-red-500 border border-red-500/20 font-black uppercase text-[10px] rounded-xl">Quitter</button>
         </div>
       </div>
 
-      {/* Tabs Menu Responsive Scroll */}
-      <div className="flex overflow-x-auto pb-4 mb-6 md:mb-8 space-x-6 md:space-x-8 no-scrollbar border-b border-white/5">
-        {[
-          { id: 'projects', label: 'Projets BTP' },
-          { id: 'gallery', label: 'Galerie Photos' },
-          { id: 'rentals', label: 'Catalogue' },
-          { id: 'messages', label: 'Messages' },
-          { id: 'settings', label: 'Réglages' }
-        ].map((tab) => (
+      {/* STATS RAPIDES */}
+      <div className="grid grid-cols-3 gap-6 mb-12">
+         <div className="bg-slate-900 p-6 rounded-3xl border border-white/5">
+            <p className="text-[10px] uppercase font-black text-slate-500 mb-1">Budget Total</p>
+            <p className="text-2xl font-black text-white italic">{(stats.totalBudget/1000000).toFixed(1)}M FCFA</p>
+         </div>
+         <div className="bg-slate-900 p-6 rounded-3xl border border-white/5">
+            <p className="text-[10px] uppercase font-black text-slate-500 mb-1">Projets</p>
+            <p className="text-2xl font-black text-white italic">{stats.activeCount}</p>
+         </div>
+         <div className="bg-slate-900 p-6 rounded-3xl border border-white/5">
+            <p className="text-[10px] uppercase font-black text-slate-500 mb-1">Messages</p>
+            <p className="text-2xl font-black text-white italic">{stats.unreadMessages}</p>
+         </div>
+      </div>
+
+      {/* TABS ADMIN */}
+      <div className="flex space-x-10 border-b border-white/5 mb-10 overflow-x-auto no-scrollbar">
+        {['projects', 'gallery', 'rentals', 'messages', 'settings'].map(tab => (
           <button 
-            key={tab.id}
-            onClick={() => setActiveSubTab(tab.id as any)} 
-            className={`whitespace-nowrap text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] pb-3 border-b-2 transition-all ${activeSubTab === tab.id ? 'text-white border-white' : 'border-transparent text-slate-500'}`}
-            style={activeSubTab === tab.id ? { color: config.accentColor, borderColor: config.accentColor } : {}}
+            key={tab} 
+            onClick={() => setActiveSubTab(tab as any)} 
+            className={`pb-4 text-[11px] font-black uppercase tracking-widest border-b-2 transition-all ${activeSubTab === tab ? 'text-white border-white' : 'text-slate-500 border-transparent'}`}
+            style={activeSubTab === tab ? { color: config.accentColor, borderColor: config.accentColor } : {}}
           >
-            {tab.label}
+            {tab === 'rentals' ? 'Location' : tab === 'settings' ? 'Système' : tab}
           </button>
         ))}
       </div>
 
-      <div className="bg-slate-900/40 rounded-2xl md:rounded-[2.5rem] border border-white/5 overflow-hidden p-4 md:p-10">
-        {activeSubTab === 'projects' && (
-          <div className="space-y-4 md:space-y-6">
-            {projects.length === 0 && <p className="text-slate-500 text-center italic py-20">Aucun projet enregistré.</p>}
-            {projects.map(p => (
-              <div key={p.id} className="bg-slate-950/60 border border-white/5 p-4 md:p-6 rounded-2xl md:rounded-3xl flex flex-col lg:flex-row gap-4 md:gap-8 items-center">
-                <div className="w-full lg:w-40 h-32 md:h-40 lg:h-32 shrink-0">
-                  <img src={p.thumbnail} className="w-full h-full object-cover rounded-xl border border-white/10" alt={p.name} />
-                </div>
-                <div className="flex-grow w-full">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-lg md:text-xl font-black text-white italic uppercase truncate max-w-[200px] md:max-w-none">{p.name}</h3>
-                    <span className="text-[7px] md:text-[9px] font-black bg-white/5 px-2 md:px-3 py-1 rounded-full text-slate-400 uppercase border border-white/5">{p.status}</span>
-                  </div>
-                  <p className="text-[8px] md:text-[10px] text-slate-500 mb-4 md:mb-6 uppercase font-bold tracking-widest">{p.client} • {p.budget.toLocaleString()} FCFA</p>
-                  
-                  {aiReport?.id === p.id && (
-                    <div className="mb-4 md:mb-6 p-4 md:p-5 bg-blue-500/10 border border-blue-500/20 rounded-xl md:rounded-2xl animate-fadeIn">
-                      <p className="text-[8px] md:text-[10px] font-black text-blue-400 uppercase mb-2">Synthèse IA Gemini</p>
-                      <p className="text-[11px] text-slate-300 italic">{aiReport.text}</p>
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap gap-2 md:gap-3">
-                    <button onClick={() => handleAiReport(p)} disabled={generatingReportId === p.id} className="flex-1 md:flex-none text-[8px] md:text-[9px] font-black bg-white/5 border border-white/10 px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl text-white hover:bg-white/10 flex items-center justify-center gap-2 uppercase">
-                      <i className={`fas ${generatingReportId === p.id ? 'fa-spinner fa-spin' : 'fa-wand-magic-sparkles'}`}></i>
-                      IA
-                    </button>
-                    <button onClick={() => handleDelete('projects', p.id)} className="flex-1 md:flex-none text-[8px] md:text-[9px] font-black bg-red-500/10 text-red-500 px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl border border-red-500/20 uppercase">Supprimer</button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* ... Autres rubriques optimisées similairement ... */}
-        {activeSubTab === 'gallery' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {gallery.map(item => (
-              <div key={item.id} className="bg-slate-950/60 rounded-2xl overflow-hidden border border-white/5 group">
-                <div className="relative aspect-video">
-                  <img src={item.url} className="w-full h-full object-cover" alt={item.title} />
-                  <button onClick={() => handleDelete('gallery', item.id)} className="absolute top-2 right-2 bg-red-600/80 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg">
-                    <i className="fa-solid fa-trash-can text-[10px]"></i>
-                  </button>
-                </div>
-                <div className="p-3 md:p-5">
-                  <p className="text-white font-bold uppercase italic text-[10px] md:text-sm">{item.title}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {activeSubTab === 'messages' && (
-          <div className="space-y-4">
-            {messages.length === 0 && <p className="text-slate-500 text-center italic py-10">Aucun message.</p>}
-            {messages.map(m => (
-              <div key={m.id} className="bg-slate-950/60 p-4 md:p-6 rounded-2xl border border-white/5">
-                <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-2">
-                  <div>
-                    <p className="text-white font-black uppercase text-[11px] md:text-sm">{m.name}</p>
-                    <p className="text-[9px] text-blue-500 font-mono italic truncate">{m.email}</p>
-                  </div>
-                  <span className="text-[7px] text-slate-500 font-black uppercase">{m.date}</span>
-                </div>
-                <p className="text-slate-400 text-[11px] italic leading-relaxed mb-4">"{m.message}"</p>
-                <button onClick={() => handleDelete('messages', m.id)} className="text-[8px] font-black text-red-500/60 uppercase">Archiver</button>
-              </div>
-            ))}
-          </div>
-        )}
-
+      {/* CONTENU VARIABLE */}
+      <div className="bg-slate-900/40 p-10 rounded-[3rem] border border-white/5">
+        
+        {/* REGLAGES SYSTEME (Logo, Banner, etc) */}
         {activeSubTab === 'settings' && (
-          <div className="max-w-2xl space-y-6 md:space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-              <div className="space-y-1">
-                <label className="text-[8px] font-black text-slate-500 uppercase ml-1">Nom Entreprise</label>
-                <input className="w-full bg-slate-950 p-4 rounded-xl text-white text-xs border border-white/5" value={config.companyName} onChange={e => setConfig({...config, companyName: e.target.value})} />
-              </div>
-              <div className="space-y-1">
-                <label className="text-[8px] font-black text-slate-500 uppercase ml-1">Couleur (Hex)</label>
-                <input className="w-full bg-slate-950 p-4 rounded-xl text-white text-xs border border-white/5" value={config.accentColor} onChange={e => setConfig({...config, accentColor: e.target.value})} />
-              </div>
-              <div className="sm:col-span-2 space-y-1">
-                <label className="text-[8px] font-black text-slate-500 uppercase ml-1">Slogan</label>
-                <input className="w-full bg-slate-950 p-4 rounded-xl text-white text-xs border border-white/5" value={config.slogan} onChange={e => setConfig({...config, slogan: e.target.value})} />
-              </div>
-            </div>
-            <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-2xl">
-               <p className="text-[9px] font-black text-green-500 uppercase mb-1">Système</p>
-               <p className="text-[10px] text-slate-400 italic">Modifications immédiates.</p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl">
+             <div className="space-y-6">
+                <h3 className="text-xl font-black text-white italic uppercase">Identité Visuelle</h3>
+                <div className="space-y-2">
+                   <label className="text-[10px] uppercase font-black text-slate-500">URL du Logo</label>
+                   <input className="w-full bg-slate-950 p-4 rounded-xl text-white border border-white/5" value={config.logoUrl} onChange={e => setConfig({...config, logoUrl: e.target.value})} />
+                   <div className="mt-4 p-4 bg-white/5 rounded-2xl flex items-center justify-center">
+                      <img src={config.logoUrl} className="h-16 object-contain" alt="Logo Preview" />
+                   </div>
+                </div>
+                <div className="space-y-2">
+                   <label className="text-[10px] uppercase font-black text-slate-500">Image de Bannière (Hero)</label>
+                   <input className="w-full bg-slate-950 p-4 rounded-xl text-white border border-white/5" value={config.heroImage} onChange={e => setConfig({...config, heroImage: e.target.value})} />
+                   <img src={config.heroImage} className="mt-4 h-32 w-full object-cover rounded-2xl border border-white/5" />
+                </div>
+             </div>
+             
+             <div className="space-y-6">
+                <h3 className="text-xl font-black text-white italic uppercase">Informations Plateforme</h3>
+                <div className="space-y-2">
+                   <label className="text-[10px] uppercase font-black text-slate-500">Nom Entreprise</label>
+                   <input className="w-full bg-slate-950 p-4 rounded-xl text-white border border-white/5" value={config.companyName} onChange={e => setConfig({...config, companyName: e.target.value})} />
+                </div>
+                <div className="space-y-2">
+                   <label className="text-[10px] uppercase font-black text-slate-500">Slogan Principal</label>
+                   <input className="w-full bg-slate-950 p-4 rounded-xl text-white border border-white/5" value={config.slogan} onChange={e => setConfig({...config, slogan: e.target.value})} />
+                </div>
+                <div className="space-y-2">
+                   <label className="text-[10px] uppercase font-black text-slate-500">Couleur Accent (HEX)</label>
+                   <div className="flex gap-4">
+                      <input className="flex-grow bg-slate-950 p-4 rounded-xl text-white border border-white/5" value={config.accentColor} onChange={e => setConfig({...config, accentColor: e.target.value})} />
+                      <div className="w-14 rounded-xl shadow-lg" style={{ backgroundColor: config.accentColor }}></div>
+                   </div>
+                </div>
+             </div>
           </div>
+        )}
+
+        {/* LISTES DE GESTION (Projets, Galerie, Location) */}
+        {(activeSubTab === 'projects' || activeSubTab === 'gallery' || activeSubTab === 'rentals') && (
+           <div className="space-y-6">
+              {(activeSubTab === 'projects' ? projects : activeSubTab === 'gallery' ? gallery : rentals).map((item: any) => (
+                <div key={item.id} className="bg-slate-950/60 p-6 rounded-3xl border border-white/5 flex items-center justify-between group">
+                   <div className="flex items-center gap-6">
+                      <img src={item.thumbnail || item.url || 'https://via.placeholder.com/100'} className="w-16 h-16 rounded-xl object-cover" />
+                      <div>
+                         <p className="text-white font-black uppercase italic">{item.name || item.title}</p>
+                         <p className="text-[10px] text-slate-500 font-mono">{item.location || item.category || item.price}</p>
+                      </div>
+                   </div>
+                   <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => handleEdit(item)} className="p-3 bg-white/5 rounded-xl text-slate-400 hover:text-white"><i className="fas fa-pen-to-square"></i></button>
+                      <button onClick={() => handleDelete(activeSubTab, item.id)} className="p-3 bg-red-500/10 rounded-xl text-red-500"><i className="fas fa-trash"></i></button>
+                   </div>
+                </div>
+              ))}
+           </div>
+        )}
+
+        {/* MESSAGES */}
+        {activeSubTab === 'messages' && (
+           <div className="space-y-6">
+              {messages.map(m => (
+                <div key={m.id} className="bg-slate-950/60 p-6 rounded-3xl border border-white/5">
+                   <div className="flex justify-between mb-4">
+                      <p className="text-white font-black uppercase">{m.name}</p>
+                      <span className="text-[10px] text-slate-500">{m.date}</span>
+                   </div>
+                   <p className="text-slate-400 italic">"{m.message}"</p>
+                </div>
+              ))}
+           </div>
         )}
       </div>
 
-      {/* Adding Modal - Fixed Responsive Padding */}
-      {isAdding && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-md">
-          <div className="bg-slate-900 border border-white/10 p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] w-full max-w-lg shadow-3xl overflow-y-auto max-h-[90vh]">
-            <h3 className="text-xl md:text-2xl font-black text-white italic uppercase mb-6 md:mb-8">Nouveau {activeSubTab === 'projects' ? 'Projet' : 'Média'}</h3>
-            <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
-              <input placeholder="Nom / Titre" required className="w-full bg-slate-950 p-4 md:p-5 rounded-xl md:rounded-2xl text-white text-sm border border-white/5" value={newItem.name || newItem.title} onChange={e => activeSubTab === 'projects' ? setNewItem({...newItem, name: e.target.value}) : setNewItem({...newItem, title: e.target.value})} />
-              <input placeholder="URL Image" required className="w-full bg-slate-950 p-4 md:p-5 rounded-xl md:rounded-2xl text-white text-sm border border-white/5" value={newItem.url} onChange={e => setNewItem({...newItem, url: e.target.value})} />
-              <div className="flex gap-3 md:gap-4 pt-4">
-                <button type="submit" className="flex-1 py-4 md:py-5 bg-white text-black font-black text-[9px] md:text-[10px] uppercase rounded-xl md:rounded-2xl tracking-widest">OK</button>
-                <button type="button" onClick={() => setIsAdding(false)} className="flex-1 py-4 md:py-5 bg-slate-800 text-white font-black text-[9px] md:text-[10px] uppercase rounded-xl md:rounded-2xl tracking-widest">ANNULER</button>
+      {/* MODAL EDIT/ADD */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md">
+           <form onSubmit={handleSave} className="bg-slate-900 border border-white/10 p-10 rounded-[3rem] w-full max-w-xl space-y-6">
+              <h3 className="text-2xl font-black text-white italic uppercase">{editingItem ? 'Modifier' : 'Ajouter'} {activeSubTab}</h3>
+              
+              <div className="grid grid-cols-1 gap-4">
+                 <input placeholder="Titre / Nom" required className="bg-slate-950 p-4 rounded-xl text-white border border-white/5" value={newItem.name || newItem.title || ''} onChange={e => activeSubTab === 'projects' ? setNewItem({...newItem, name: e.target.value}) : setNewItem({...newItem, title: e.target.value})} />
+                 <input placeholder="Image URL" required className="bg-slate-950 p-4 rounded-xl text-white border border-white/5" value={newItem.thumbnail || newItem.url || ''} onChange={e => activeSubTab === 'projects' ? setNewItem({...newItem, thumbnail: e.target.value}) : setNewItem({...newItem, url: e.target.value})} />
+                 
+                 {activeSubTab === 'projects' && (
+                   <>
+                    <input placeholder="Lieu" className="bg-slate-950 p-4 rounded-xl text-white border border-white/5" value={newItem.location || ''} onChange={e => setNewItem({...newItem, location: e.target.value})} />
+                    <input placeholder="Budget (Nombre)" type="number" className="bg-slate-950 p-4 rounded-xl text-white border border-white/5" value={newItem.budget || ''} onChange={e => setNewItem({...newItem, budget: Number(e.target.value)})} />
+                   </>
+                 )}
+                 
+                 {activeSubTab === 'rentals' && (
+                   <input placeholder="Prix (ex: 50.000 FCFA)" className="bg-slate-950 p-4 rounded-xl text-white border border-white/5" value={newItem.price || ''} onChange={e => setNewItem({...newItem, price: e.target.value})} />
+                 )}
               </div>
-            </form>
-          </div>
+
+              <div className="flex gap-4">
+                 <button type="submit" className="flex-grow py-5 bg-white text-black font-black uppercase rounded-2xl tracking-widest">Enregistrer</button>
+                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-grow py-5 bg-slate-800 text-white font-black uppercase rounded-2xl tracking-widest">Annuler</button>
+              </div>
+           </form>
         </div>
       )}
     </div>
