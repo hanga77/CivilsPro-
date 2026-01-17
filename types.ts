@@ -37,11 +37,18 @@ export interface SiteConfig {
   companyName: string;
   companySuffix: string;
   slogan: string;
-  logoUrl: string; // Si vide, utilise le symbole pi
+  logoUrl: string;
   accentColor: string;
   heroImage: string;
   contactPhones: string[];
   contactLocation: string;
+  footerAbout: string;
+  socialLinks: {
+    facebook: string;
+    linkedin: string;
+    instagram: string;
+    whatsapp: string;
+  };
 }
 
 export interface User {

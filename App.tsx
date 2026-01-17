@@ -8,255 +8,177 @@ import { INITIAL_PROJECTS } from './constants';
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [siteConfig, setSiteConfig] = useState<SiteConfig>({
-    companyName: 'BATI-PLUS',
-    companySuffix: 'CAMEROUN',
-    slogan: 'L’INGÉNIERIE DE PRÉCISION',
+    companyName: 'PI-CONSTRUCTION',
+    companySuffix: 'BTP SARL',
+    slogan: 'L’INGÉNIERIE INGÉNIEUSE & RÉACTIVE',
     logoUrl: '',
-    accentColor: '#fbbf24', // Jaune construction type BTP
+    accentColor: '#fbbf24', 
     heroImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=2070',
     contactPhones: ['(+237) 671 34 54 41', '(+237) 699 46 63 21'],
-    contactLocation: 'Zone Industrielle de Bassa\nDouala, Cameroun'
+    contactLocation: 'Unité Mobile de Génie Civil\nDéploiement National (Douala - Yaoundé)',
+    footerAbout: 'PI-CONSTRUCTION BTP SARL est une jeune structure portée par des experts hautement qualifiés. Créativité, ingéniosité et perspicacité guident chacune de nos interventions pour une satisfaction garantie.',
+    socialLinks: {
+      facebook: 'https://facebook.com/piconstruction',
+      linkedin: 'https://linkedin.com/company/piconstruction',
+      instagram: '',
+      whatsapp: '+237671345441'
+    }
   });
   
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
   
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([
-    { id: '1', category: 'Structure', url: 'https://images.unsplash.com/photo-1589939705384-5185138a04b9?auto=format&fit=crop&q=80&w=800', title: 'Ouvrage d\'Art Douala' },
-    { id: '2', category: 'Bâtiment', url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800', title: 'Siège Social R+6' },
-    { id: '3', category: 'Gros Œuvre', url: 'https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=800', title: 'Fondations Profondes' },
+    { id: '1', category: 'Ingénierie', url: 'https://images.unsplash.com/photo-1581094794329-c8112a4e5190?auto=format&fit=crop&q=80&w=800', title: 'Bureau d\'études mobile' },
+    { id: '2', category: 'Expertise', url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=800', title: 'Personnel Qualifié en Action' },
+    { id: '3', category: 'Technique', url: 'https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=800', title: 'Mise en œuvre flexible' },
   ]);
 
   const [rentalItems, setRentalItems] = useState<RentalItem[]>([
-    { id: '1', name: "Pelle Hydraulique 22T", icon: "fa-tractor", price: "250.000 FCFA/J", desc: "Puissance et précision pour vos terrassements." },
-    { id: '2', name: "Échafaudage Multidirectionnel", icon: "fa-border-all", price: "Sur Devis", desc: "Sécurité maximale pour travaux en hauteur." },
-    { id: '3', name: "Centrale à Béton Mobile", icon: "fa-industry", price: "À l'heure", desc: "Production sur site pour une qualité optimale." }
+    { id: '1', name: "Pelle Hydraulique Moderne", icon: "fa-tractor", price: "Sur Devis", desc: "Équipement de pointe pour vos terrassements." },
+    { id: '2', name: "Logistique de Chantier", icon: "fa-truck-fast", price: "Sur Devis", desc: "Réactivité et professionnalisme garantis." },
+    { id: '3', name: "Appareillage de Mesure", icon: "fa-compass", price: "À la journée", desc: "Précision millimétrée par nos experts." }
   ]);
 
-  const [galleryFilter, setGalleryFilter] = useState('Tous');
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
 
-  const handleLogin = useCallback((e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (loginForm.email === 'admin@batiplus.com' && loginForm.password === 'admin') {
+    if (loginForm.email === 'admin@piconstruction.com' && loginForm.password === 'admin') {
       setIsLoggedIn(true);
     }
-  }, [loginForm]);
-
-  const filteredGallery = useMemo(() => {
-    return galleryFilter === 'Tous' 
-      ? galleryItems 
-      : galleryItems.filter(item => item.category === galleryFilter);
-  }, [galleryFilter, galleryItems]);
+  };
 
   return (
-    <Layout 
-      activeTab={activeTab} 
-      setActiveTab={setActiveTab} 
-      isAdmin={isLoggedIn} 
-      setIsAdmin={setIsLoggedIn}
-      config={siteConfig}
-    >
+    <Layout activeTab={activeTab} setActiveTab={setActiveTab} isAdmin={isLoggedIn} setIsAdmin={setIsLoggedIn} config={siteConfig}>
       <div className="pt-32 pb-20">
         {activeTab === 'home' && (
           <div className="animate-fadeIn space-y-32">
-            {/* Hero Section */}
             <section className="px-6">
               <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 <div className="lg:col-span-7 relative z-10">
                   <div className="inline-flex items-center space-x-3 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-8">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: siteConfig.accentColor }}></span>
-                    <span className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-300">{siteConfig.slogan}</span>
+                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: siteConfig.accentColor }}></span>
+                    <span className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-300">INGÉNIOSITÉ & PERSO QUALIFIÉ</span>
                   </div>
-                  <h1 className="text-6xl md:text-8xl font-black text-white italic tracking-tighter leading-[0.85] mb-10 uppercase">
-                    L'EXCELLENCE <br/>
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-transparent" style={{ WebkitTextStroke: `1px ${siteConfig.accentColor}` }}>TECHNIQUE.</span>
+                  <h1 className="text-6xl md:text-[7.5rem] font-black text-white italic tracking-tighter leading-[0.8] mb-10 uppercase">
+                    BÂTIR <br/>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-transparent" style={{ WebkitTextStroke: `1px ${siteConfig.accentColor}` }}>L'EXCEPTION.</span>
                   </h1>
-                  <p className="text-slate-400 text-lg md:text-xl font-medium max-w-xl mb-12 leading-relaxed">
-                    Études techniques, pilotage de chantiers et location d'engins lourds. Nous bâtissons les piliers du développement industriel au Cameroun.
+                  <p className="text-slate-400 text-lg md:text-2xl font-medium max-w-xl mb-12 leading-relaxed italic border-l-4 pl-6" style={{ borderColor: siteConfig.accentColor }}>
+                    "La mallette est notre bureau, le terrain est notre domaine. Créativité et perspicacité pour votre satisfaction."
                   </p>
                   <div className="flex flex-wrap gap-4">
-                    <button 
-                      onClick={() => setActiveTab('projects')} 
-                      className="px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all hover:scale-105 shadow-2xl"
-                      style={{ backgroundColor: siteConfig.accentColor, color: '#000' }}
-                    >
-                      Voir l'Expertise
-                    </button>
-                    <button 
-                      onClick={() => setActiveTab('rentals')} 
-                      className="bg-white/5 text-white border border-white/10 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-white/10 transition-all"
-                    >
-                      Parc Matériels
-                    </button>
+                    <button onClick={() => setActiveTab('projects')} className="px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-2xl transition-all hover:scale-105" style={{ backgroundColor: siteConfig.accentColor, color: '#000' }}>NOS SERVICES PRO</button>
+                    <button onClick={() => setActiveTab('rentals')} className="bg-white/5 text-white border border-white/10 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-white/10">ÉQUIPEMENTS DE POINTE</button>
                   </div>
                 </div>
-                <div className="lg:col-span-5 relative h-[500px] rounded-[3rem] overflow-hidden border border-white/5 shadow-3xl">
-                  <img src={siteConfig.heroImage} className="w-full h-full object-cover" alt="Chantier" />
+                <div className="lg:col-span-5 relative h-[650px] rounded-[4rem] overflow-hidden border border-white/5 shadow-3xl">
+                  <img src={siteConfig.heroImage} className="w-full h-full object-cover grayscale-[20%]" alt="Ingénierie de précision" />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
-                  <div className="absolute bottom-10 left-10 right-10 p-8 bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10">
-                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Dernier Projet</p>
-                     <p className="text-xl font-bold text-white italic uppercase tracking-tighter">Réhabilitation Portuaire Douala</p>
+                  <div className="absolute bottom-10 left-10 p-8 bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 max-w-xs">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-yellow-500 mb-2">Notre ADN</p>
+                    <p className="text-white font-bold italic uppercase tracking-tighter leading-tight">Flexibilité totale dans la mise en œuvre.</p>
                   </div>
                 </div>
               </div>
             </section>
 
-            {/* KPI Section */}
-            <section className="max-w-7xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
-               {[
-                 { val: '15+', label: 'Ans d\'Expérience' },
-                 { val: '120+', label: 'Projets Livrés' },
-                 { val: '500M', label: 'Budget Moyen' },
-                 { val: '45+', label: 'Engins Lourds' }
-               ].map((kpi, i) => (
-                 <div key={i} className="text-center group">
-                    <p className="text-5xl font-black italic tracking-tighter mb-2 group-hover:scale-110 transition-transform" style={{ color: siteConfig.accentColor }}>{kpi.val}</p>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">{kpi.label}</p>
-                 </div>
-               ))}
+            {/* Section Atouts Maîtres */}
+            <section className="max-w-7xl mx-auto px-8">
+              <div className="text-center mb-20">
+                <h2 className="text-4xl font-black text-white italic uppercase tracking-widest">NOS ATOUTS <span style={{ color: siteConfig.accentColor }}>MAÎTRES</span></h2>
+                <div className="h-1 w-20 bg-yellow-500 mx-auto mt-4"></div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                {[
+                  { title: 'CRÉATIVITÉ', icon: 'fa-lightbulb', text: 'Des solutions techniques ingénieuses pour chaque défi.' },
+                  { title: 'QUALIFICATION', icon: 'fa-user-tie', text: 'Un personnel professionnel et hautement diplômé.' },
+                  { title: 'MODERNITÉ', icon: 'fa-gears', text: 'Des équipements de pointe pour une précision optimale.' },
+                  { title: 'FLEXIBILITÉ', icon: 'fa-shuffle', text: 'Une structure agile qui s\'adapte à vos urgences.' }
+                ].map((atout, i) => (
+                  <div key={i} className="bg-white/5 border border-white/5 p-8 rounded-3xl hover:bg-white/10 transition-all text-center">
+                    <i className={`fas ${atout.icon} text-3xl mb-6`} style={{ color: siteConfig.accentColor }}></i>
+                    <h4 className="text-white font-black uppercase tracking-tighter mb-3">{atout.title}</h4>
+                    <p className="text-slate-500 text-xs leading-relaxed">{atout.text}</p>
+                  </div>
+                ))}
+              </div>
             </section>
-          </div>
-        )}
-
-        {activeTab === 'projects' && (
-          <div className="px-6 max-w-7xl mx-auto animate-fadeIn">
-            <div className="flex items-center space-x-4 mb-16">
-               <div className="h-px flex-1 bg-white/10"></div>
-               <h2 className="text-5xl font-black text-white italic uppercase tracking-tighter">Ingénierie & Etudes</h2>
-               <div className="h-px flex-1 bg-white/10"></div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {projects.map(p => (
-                <div key={p.id} className="group relative bg-slate-900/20 rounded-[3rem] border border-white/5 overflow-hidden hover:border-yellow-500/20 transition-all">
-                  <div className="h-80 overflow-hidden relative">
-                    <img src={p.thumbnail} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt={p.name} />
-                    <div className="absolute top-8 left-8">
-                       <span className="bg-white/90 backdrop-blur px-4 py-2 rounded-xl text-[9px] font-black uppercase text-slate-950 tracking-widest">{p.status}</span>
-                    </div>
-                  </div>
-                  <div className="p-12">
-                    <h3 className="text-3xl font-black text-white italic uppercase mb-6 tracking-tighter">{p.name}</h3>
-                    <div className="grid grid-cols-2 gap-8 border-t border-white/5 pt-8">
-                       <div>
-                          <p className="text-[9px] font-black text-slate-600 uppercase mb-1">Localisation</p>
-                          <p className="text-sm font-bold text-slate-300">{p.location}</p>
-                       </div>
-                       <div>
-                          <p className="text-[9px] font-black text-slate-600 uppercase mb-1">Budget</p>
-                          <p className="text-sm font-black text-white">{p.budget.toLocaleString()} FCFA</p>
-                       </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         )}
 
         {activeTab === 'rentals' && (
           <div className="px-6 max-w-7xl mx-auto animate-fadeIn">
-            <div className="mb-20 text-center">
-              <h2 className="text-6xl font-black text-white italic uppercase tracking-tighter mb-4">Parc Matériels</h2>
-              <p className="text-slate-500 font-medium">Équipements de pointe certifiés conformes.</p>
-            </div>
+            <h2 className="text-6xl font-black text-white italic uppercase tracking-tighter mb-4">MATÉRIEL <span style={{ color: siteConfig.accentColor }}>MODERNE</span></h2>
+            <p className="text-slate-500 mb-16 max-w-2xl text-lg font-medium italic">"Des équipements de pointe pour des chantiers performants."</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {rentalItems.map(item => (
-                <div key={item.id} className="bg-slate-950 border border-white/5 p-12 rounded-[3.5rem] flex flex-col items-center text-center group hover:bg-slate-900/40 transition-all">
-                  <div className="w-24 h-24 rounded-full flex items-center justify-center mb-10 transition-transform group-hover:rotate-12" style={{ backgroundColor: `${siteConfig.accentColor}11`, color: siteConfig.accentColor }}>
+                <div key={item.id} className="bg-slate-950 border border-white/5 p-12 rounded-[3.5rem] flex flex-col items-center text-center group hover:scale-[1.02] transition-all">
+                  <div className="w-24 h-24 rounded-full flex items-center justify-center mb-10" style={{ backgroundColor: `${siteConfig.accentColor}11`, color: siteConfig.accentColor }}>
                     <i className={`fas ${item.icon} text-4xl`}></i>
                   </div>
                   <h3 className="text-2xl font-black text-white uppercase italic mb-4 tracking-tighter">{item.name}</h3>
-                  <p className="text-slate-500 text-sm italic mb-10 leading-relaxed max-w-[200px]">"{item.desc}"</p>
-                  <div className="w-full pt-8 border-t border-white/5 flex flex-col items-center">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Tarif de base</span>
-                    <span className="text-xl font-black text-white">{item.price}</span>
-                  </div>
+                  <p className="text-slate-500 text-sm mb-10 leading-relaxed italic">"{item.desc}"</p>
+                  <a href={`https://wa.me/${siteConfig.socialLinks.whatsapp.replace(/\D/g,'')}?text=Bonjour Pi-Construction, j'ai besoin de vos équipements modernes pour : ${item.name}`} className="mt-auto w-full py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center space-x-2 bg-white text-slate-950 hover:bg-opacity-90 transition-all shadow-xl">
+                    <i className="fab fa-whatsapp text-lg"></i>
+                    <span>DEVIS IMMÉDIAT</span>
+                  </a>
                 </div>
               ))}
             </div>
           </div>
+        )}
+
+        {activeTab === 'projects' && (
+           <div className="px-6 max-w-7xl mx-auto animate-fadeIn">
+             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+               <div>
+                 <h2 className="text-6xl font-black text-white italic uppercase tracking-tighter leading-none">INGÉNIOSITÉ <br/><span style={{ color: siteConfig.accentColor }}>APPLIQUÉE</span></h2>
+               </div>
+               <p className="text-slate-500 max-w-md text-right text-sm font-bold uppercase tracking-widest">Le personnel qualifié au service de vos infrastructures.</p>
+             </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+               {projects.map(p => (
+                 <div key={p.id} className="group bg-slate-900/20 rounded-[4rem] border border-white/5 overflow-hidden transition-all hover:border-white/20">
+                   <div className="h-80 overflow-hidden relative">
+                     <img src={p.thumbnail} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt={p.name} />
+                     <div className="absolute top-8 right-8">
+                       <span className="bg-slate-950/80 backdrop-blur-md px-4 py-2 rounded-lg text-[9px] font-black uppercase text-white border border-white/10 tracking-widest">{p.status}</span>
+                     </div>
+                   </div>
+                   <div className="p-12">
+                     <h3 className="text-3xl font-black text-white italic uppercase mb-4 leading-none tracking-tighter">{p.name}</h3>
+                     <p className="text-slate-500 font-bold uppercase text-[10px] tracking-widest mb-6"><i className="fas fa-helmet-safety mr-2"></i> RÉALISÉ PAR NOTRE ÉQUIPE PRO</p>
+                     <p className="text-slate-400 text-sm leading-relaxed max-w-md italic">Expertise technique de pointe et suivi rigoureux, même sans bureau fixe.</p>
+                   </div>
+                 </div>
+               ))}
+             </div>
+           </div>
         )}
 
         {activeTab === 'admin' && (
           <div className="px-6 max-w-7xl mx-auto animate-fadeIn">
             {!isLoggedIn ? (
               <div className="min-h-[60vh] flex items-center justify-center">
-                <form 
-                  onSubmit={handleLogin} 
-                  className="bg-slate-950 p-16 rounded-[4rem] border border-white/10 w-full max-w-md shadow-3xl text-center"
-                >
-                  <i className="fas fa-lock text-3xl mb-8 opacity-20"></i>
-                  <h2 className="text-2xl font-black text-white italic uppercase tracking-widest mb-10">Auth Admin</h2>
-                  <div className="space-y-4">
-                    <input 
-                      type="email" 
-                      required 
-                      placeholder="Email" 
-                      className="w-full bg-slate-900 border border-white/5 rounded-2xl px-8 py-5 text-white outline-none focus:border-yellow-600 font-bold transition-all" 
-                      value={loginForm.email} 
-                      onChange={e => setLoginForm({...loginForm, email: e.target.value})} 
-                    />
-                    <input 
-                      type="password" 
-                      required 
-                      placeholder="Password" 
-                      className="w-full bg-slate-900 border border-white/5 rounded-2xl px-8 py-5 text-white outline-none focus:border-yellow-600 font-bold transition-all" 
-                      value={loginForm.password} 
-                      onChange={e => setLoginForm({...loginForm, password: e.target.value})} 
-                    />
+                <form onSubmit={handleLogin} className="bg-slate-950 p-16 rounded-[4rem] border border-white/10 w-full max-w-md text-center shadow-3xl">
+                  <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-10">
+                    <i className="fas fa-lock text-3xl" style={{ color: siteConfig.accentColor }}></i>
                   </div>
-                  <button type="submit" className="w-full text-slate-950 py-6 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl transition-all mt-10 hover:opacity-90" style={{ backgroundColor: siteConfig.accentColor }}>Accéder au Système</button>
-                  <p className="mt-8 text-[8px] font-black text-slate-700 uppercase tracking-widest">Compte Test : admin@batiplus.com / admin</p>
+                  <h2 className="text-2xl font-black text-white italic uppercase mb-10">PI-ADMIN LOGIN</h2>
+                  <div className="space-y-4 text-left">
+                    <label className="text-[9px] font-black uppercase text-slate-500 ml-4">Identifiant</label>
+                    <input type="email" required className="w-full bg-slate-900 border border-white/5 rounded-2xl px-8 py-5 text-white" value={loginForm.email} onChange={e => setLoginForm({...loginForm, email: e.target.value})} />
+                    <label className="text-[9px] font-black uppercase text-slate-500 ml-4">Code d'accès</label>
+                    <input type="password" required className="w-full bg-slate-900 border border-white/5 rounded-2xl px-8 py-5 text-white" value={loginForm.password} onChange={e => setLoginForm({...loginForm, password: e.target.value})} />
+                  </div>
+                  <button type="submit" className="w-full text-slate-950 py-6 rounded-2xl font-black text-xs uppercase tracking-widest mt-12 transition-all hover:scale-105" style={{ backgroundColor: siteConfig.accentColor }}>DÉVERROUILLER LA CONSOLE</button>
                 </form>
               </div>
             ) : (
-              <AdminDashboard 
-                projects={projects} 
-                setProjects={setProjects}
-                gallery={galleryItems} 
-                setGallery={setGalleryItems}
-                rentals={rentalItems} 
-                setRentals={setRentalItems}
-                config={siteConfig}
-                setConfig={setSiteConfig}
-                logout={() => setIsLoggedIn(false)}
-              />
+              <AdminDashboard projects={projects} setProjects={setProjects} gallery={galleryItems} setGallery={setGalleryItems} rentals={rentalItems} setRentals={setRentalItems} config={siteConfig} setConfig={setSiteConfig} logout={() => setIsLoggedIn(false)} />
             )}
-          </div>
-        )}
-
-        {activeTab === 'gallery' && (
-          <div className="px-6 max-w-7xl mx-auto animate-fadeIn">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-20">
-              <h2 className="text-6xl font-black text-white italic uppercase tracking-tighter leading-none">Archives <br/>Chantiers.</h2>
-              <div className="flex bg-slate-950 p-2 rounded-2xl border border-white/5">
-                {['Tous', 'Structure', 'Bâtiment', 'Gros Œuvre'].map(c => (
-                  <button 
-                    key={c} 
-                    onClick={() => setGalleryFilter(c)} 
-                    className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                      galleryFilter === c ? 'text-slate-950' : 'text-slate-500 hover:text-white'
-                    }`}
-                    style={galleryFilter === c ? { backgroundColor: siteConfig.accentColor } : {}}
-                  >
-                    {c}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-              {filteredGallery.map(item => (
-                <div key={item.id} className="group relative rounded-[3rem] overflow-hidden border border-white/5 bg-slate-900 shadow-2xl aspect-[4/5]">
-                  <img src={item.url} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" alt={item.title} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity"></div>
-                  <div className="absolute bottom-10 left-10 right-10">
-                    <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-3" style={{ color: siteConfig.accentColor }}>{item.category}</p>
-                    <p className="text-2xl font-bold text-white italic uppercase tracking-tighter leading-tight">{item.title}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         )}
       </div>
