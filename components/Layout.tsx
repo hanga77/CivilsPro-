@@ -46,6 +46,7 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, isAd
           <div className="hidden lg:flex items-center space-x-1">
             {[
               { id: 'home', label: 'ACCUEIL', icon: 'fa-house' },
+              { id: 'expertise', label: 'EXPERTISE', icon: 'fa-microchip' },
               { id: 'projects', label: 'SERVICES', icon: 'fa-helmet-safety' },
               { id: 'gallery', label: 'GALERIE', icon: 'fa-images' },
               { id: 'rentals', label: 'LOCATIONS', icon: 'fa-truck-pickup' },

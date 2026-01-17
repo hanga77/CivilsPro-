@@ -72,7 +72,7 @@ const App: React.FC = () => {
                     "La mallette est notre bureau, le terrain est notre domaine. Créativité et perspicacité pour votre satisfaction."
                   </p>
                   <div className="flex flex-wrap gap-4">
-                    <button onClick={() => setActiveTab('projects')} className="px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-2xl transition-all hover:scale-105" style={{ backgroundColor: siteConfig.accentColor, color: '#000' }}>NOS SERVICES PRO</button>
+                    <button onClick={() => setActiveTab('expertise')} className="px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-2xl transition-all hover:scale-105" style={{ backgroundColor: siteConfig.accentColor, color: '#000' }}>NOS EXPERTISES</button>
                     <button onClick={() => setActiveTab('gallery')} className="bg-white/5 text-white border border-white/10 px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-white/10">VOIR LA GALERIE</button>
                   </div>
                 </div>
@@ -108,6 +108,28 @@ const App: React.FC = () => {
                 ))}
               </div>
             </section>
+          </div>
+        )}
+
+        {activeTab === 'expertise' && (
+          <div className="px-6 max-w-7xl mx-auto animate-fadeIn">
+            <h2 className="text-6xl font-black text-white italic uppercase tracking-tighter mb-16">NOTRE <span style={{ color: siteConfig.accentColor }}>SAVOIR-FAIRE</span></h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {[
+                { title: "Ingénierie de Structure", desc: "Calculs de structures complexes (Béton armé, Charpente métallique) via logiciels de pointe.", icon: "fa-microchip" },
+                { title: "Génie Civil & BTP", desc: "Exécution de gros œuvres et d'infrastructures avec une rigueur technique absolue.", icon: "fa-helmet-safety" },
+                { title: "Audit & Expertise", desc: "Diagnostics structurels et expertises techniques pour la réhabilitation de bâtiments.", icon: "fa-magnifying-glass-chart" },
+                { title: "Maîtrise d'Œuvre Agile", desc: "Pilotage de projet flexible et suivi rigoureux via nos unités mobiles de déploiement.", icon: "fa-person-walking-luggage" }
+              ].map((exp, idx) => (
+                <div key={idx} className="bg-slate-900/40 border border-white/10 p-12 rounded-[3rem] hover:border-yellow-500/50 transition-all group">
+                   <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform" style={{ color: siteConfig.accentColor }}>
+                     <i className={`fas ${exp.icon} text-3xl`}></i>
+                   </div>
+                   <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-4">{exp.title}</h3>
+                   <p className="text-slate-400 leading-relaxed font-medium">{exp.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -161,7 +183,7 @@ const App: React.FC = () => {
            <div className="px-6 max-w-7xl mx-auto animate-fadeIn">
              <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
                <div>
-                 <h2 className="text-6xl font-black text-white italic uppercase tracking-tighter leading-none">INGÉNIOSITÉ <br/><span style={{ color: siteConfig.accentColor }}>APPLIQUÉE</span></h2>
+                 <h2 className="text-6xl font-black text-white italic uppercase tracking-tighter leading-none">RÉALISATIONS <br/><span style={{ color: siteConfig.accentColor }}>INGÉNIEUSES</span></h2>
                </div>
                <p className="text-slate-500 max-w-md text-right text-sm font-bold uppercase tracking-widest">Le personnel qualifié au service de vos infrastructures.</p>
              </div>
