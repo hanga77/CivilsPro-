@@ -33,6 +33,16 @@ export interface RentalItem {
   desc?: string;
 }
 
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  date: string;
+  isRead: boolean;
+}
+
 export interface SiteConfig {
   companyName: string;
   companySuffix: string;

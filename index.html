@@ -4,7 +4,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PI-CONSTRUCTION | BTP SARL</title>
+    
+    <!-- SEO Primaire -->
+    <title>PI-CONSTRUCTION | Ingénierie de Structure & BTP de Haute Précision</title>
+    <meta name="description" content="PI-CONSTRUCTION BTP SARL : Expertise mondiale en ingénierie de structure, génie civil lourd et audit technique. Nous bâtissons l'infrastructure indestructible du Cameroun.">
+    <meta name="keywords" content="Génie Civil, BTP Cameroun, Construction Douala, Ingénierie Structure, Audit Bâtiment, Location Engins, PI-CONSTRUCTION, Construction Mondiale">
+    <meta name="author" content="PI-CONSTRUCTION BTP SARL">
+    <link rel="canonical" href="https://piconstruction.cm" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://piconstruction.cm/">
+    <meta property="og:title" content="PI-CONSTRUCTION | L'ingénierie indestructible">
+    <meta property="og:description" content="Expertise technique de pointe en Génie Civil. Nous transformons vos visions en structures indestructibles.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=1200">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="PI-CONSTRUCTION | World-Class Engineering">
+    <meta property="twitter:description" content="Expertise technique de pointe en Génie Civil et BTP au Cameroun.">
+
+    <!-- Données Structurées (JSON-LD) - SEO Local -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "PI-CONSTRUCTION BTP SARL",
+      "image": "https://images.unsplash.com/photo-1541888946425-d81bb19480c5",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Douala - Yaoundé",
+        "addressLocality": "Douala",
+        "addressCountry": "CM"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 4.0511,
+        "longitude": 9.7679
+      },
+      "url": "https://piconstruction.cm",
+      "telephone": "+237671345441",
+      "priceRange": "$$$",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "opens": "08:00",
+          "closes": "17:00"
+        }
+      ]
+    }
+    </script>
     
     <!-- Scripts de base -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,21 +70,37 @@
     <style>
         body { 
           font-family: 'Plus Jakarta Sans', sans-serif; 
-          background-color: #0f172a;
+          background-color: #020617;
           margin: 0;
           color: #e2e8f0;
           overflow-x: hidden;
         }
         .animate-fadeIn {
-          animation: fadeIn 0.5s ease-out forwards;
+          animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
+          from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        :focus {
+          outline: 2px solid #fbbf24;
+          outline-offset: 4px;
+        }
+        ::-webkit-scrollbar {
+          width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+          background: #020617;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #1e293b;
+          border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #334155;
         }
     </style>
 
-    <!-- Importmap UNIQUE et COHÉRENT (React 18.2.0 partout) -->
     <script type="importmap">
     {
       "imports": {
@@ -42,9 +114,8 @@
     }
     </script>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-yellow-500/30 selection:text-white">
     <div id="root"></div>
-    <!-- Chargement du script principal en tant que module ES6 -->
     <script type="module" src="./index.tsx"></script>
 </body>
 </html>

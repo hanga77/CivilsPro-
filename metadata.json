@@ -1,6 +1,6 @@
 {
-  "name": "CivilsPro - Plateforme Génie Civil",
-  "description": "Une plateforme professionnelle complète pour la gestion de projets de génie civil, incluant un tableau de bord administratif, le suivi de chantiers et la génération de rapports via IA.",
+  "name": "PI-CONSTRUCTION | BTP SARL",
+  "description": "Plateforme d'ingénierie et de construction civile. Expertise, suivi de projets et location de matériel lourd.",
   "requestFramePermissions": [
     "camera",
     "geolocation"
