@@ -16,6 +16,8 @@ export interface Project {
   progress: number;
   startDate: string;
   thumbnail: string;
+  description: string;
+  sector: string;
 }
 
 export interface GalleryItem {
@@ -43,16 +45,32 @@ export interface ContactMessage {
   isRead: boolean;
 }
 
+export interface Industry {
+  id: string;
+  title: string;
+  icon: string;
+  description: string;
+  imageUrl: string;
+}
+
 export interface SiteConfig {
   companyName: string;
   companySuffix: string;
   slogan: string;
+  subSlogan: string;
   logoUrl: string;
   accentColor: string;
+  primaryColor: string;
   heroImage: string;
   contactPhones: string[];
+  contactEmail: string;
   contactLocation: string;
   footerAbout: string;
+  stats: {
+    projectsCount: string;
+    expertiseYears: string;
+    teamSize: string;
+  };
   socialLinks: {
     facebook: string;
     linkedin: string;
