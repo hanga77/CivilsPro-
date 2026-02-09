@@ -30,19 +30,22 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, isAd
     { id: 'admin', label: 'PORTAIL', icon: 'fa-lock' }
   ];
 
+  // Détermine si on est en mode "Focus" (onglet contact)
+  const isFocusMode = activeTab === 'contact';
+
   return (
     <div className="min-h-screen flex flex-col bg-white text-slate-900">
       {/* HEADER */}
       <header className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
-        scrolled ? 'bg-[#001E42] py-2 shadow-2xl' : 'bg-transparent py-6'
+        scrolled || isFocusMode ? 'bg-[#001E42] py-2 shadow-2xl' : 'bg-transparent py-6'
       }`}>
-        <nav className="max-w-[1400px] mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center space-x-4 cursor-pointer" onClick={() => setActiveTab('home')}>
-            <div className="w-12 h-12 bg-white flex items-center justify-center p-1 rounded-sm shadow-xl">
+        <nav className="max-w-[1400px] mx-auto px-6 flex justify-between items-center h-16">
+          <div className="flex items-center space-x-4 cursor-pointer group" onClick={() => setActiveTab('home')}>
+            <div className="w-12 h-12 bg-white flex items-center justify-center p-1 rounded-sm shadow-xl transition-transform group-hover:scale-105">
                <img src={config.logoUrl} className="w-full h-full object-contain" alt="Logo" />
             </div>
             <div className="flex flex-col">
-              <span className={`text-xl font-black tracking-tighter leading-none uppercase ${scrolled ? 'text-white' : 'text-white'}`}>
+              <span className="text-xl font-black tracking-tighter leading-none uppercase text-white">
                 {config.companyName}
               </span>
               <span className="text-[7px] font-black tracking-[0.4em] text-[#FFB81C] uppercase mt-1">
@@ -51,41 +54,58 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, isAd
             </div>
           </div>
           
-          <div className="hidden lg:flex items-center space-x-1">
-            {navItems.map((tab) => (
-              <button 
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative px-5 py-2 text-[10px] font-black tracking-widest transition-all ${
-                  activeTab === tab.id ? 'text-[#FFB81C]' : 'text-white hover:text-[#FFB81C]'
-                }`}
-              >
-                {tab.label}
-                {activeTab === tab.id && (
-                  <span className="absolute bottom-0 left-5 right-5 h-[2px] bg-[#FFB81C]"></span>
-                )}
-              </button>
-            ))}
-          </div>
+          {/* Menu masqué si isFocusMode est vrai */}
+          {!isFocusMode && (
+            <>
+              <div className="hidden lg:flex items-center space-x-1">
+                {navItems.map((tab) => (
+                  <button 
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`relative px-5 py-2 text-[10px] font-black tracking-widest transition-all ${
+                      activeTab === tab.id ? 'text-[#FFB81C]' : 'text-white hover:text-[#FFB81C]'
+                    }`}
+                  >
+                    {tab.label}
+                    {activeTab === tab.id && (
+                      <span className="absolute bottom-0 left-5 right-5 h-[2px] bg-[#FFB81C]"></span>
+                    )}
+                  </button>
+                ))}
+              </div>
 
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden w-10 h-10 flex items-center justify-center text-white">
-            <i className={`fas ${isMenuOpen ? 'fa-xmark' : 'fa-bars'} text-xl`}></i>
-          </button>
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden w-10 h-10 flex items-center justify-center text-white">
+                <i className={`fas ${isMenuOpen ? 'fa-xmark' : 'fa-bars'} text-xl`}></i>
+              </button>
+            </>
+          )}
+
+          {/* En mode focus, on peut afficher un bouton discret de retour à l'accueil pour l'ergonomie */}
+          {isFocusMode && (
+            <button 
+              onClick={() => setActiveTab('home')}
+              className="text-[10px] font-black text-[#FFB81C] uppercase tracking-widest flex items-center gap-2 hover:text-white transition-colors"
+            >
+              <i className="fas fa-arrow-left"></i> Retour au site
+            </button>
+          )}
         </nav>
 
-        {/* Mobile Menu */}
-        <div className={`lg:hidden fixed inset-0 top-0 bg-[#001E42] transition-all duration-500 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-          <div className="flex justify-end p-6">
-            <button onClick={() => setIsMenuOpen(false)} className="text-white text-2xl"><i className="fas fa-xmark"></i></button>
+        {/* Mobile Menu - Uniquement si pas en mode focus */}
+        {!isFocusMode && (
+          <div className={`lg:hidden fixed inset-0 top-0 bg-[#001E42] transition-all duration-500 ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+            <div className="flex justify-end p-6">
+              <button onClick={() => setIsMenuOpen(false)} className="text-white text-2xl"><i className="fas fa-xmark"></i></button>
+            </div>
+            <div className="flex flex-col p-10 space-y-8">
+              {navItems.map((tab) => (
+                <button key={tab.id} onClick={() => { setActiveTab(tab.id); setIsMenuOpen(false); }} className="text-left text-3xl font-black text-white uppercase italic tracking-tighter border-b border-white/10 pb-4">
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex flex-col p-10 space-y-8">
-            {navItems.map((tab) => (
-              <button key={tab.id} onClick={() => { setActiveTab(tab.id); setIsMenuOpen(false); }} className="text-left text-3xl font-black text-white uppercase italic tracking-tighter border-b border-white/10 pb-4">
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        )}
       </header>
 
       <main className="flex-grow">
