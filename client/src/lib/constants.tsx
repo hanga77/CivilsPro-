@@ -1,5 +1,5 @@
 
-import { Project, ProjectStatus, Industry } from './types';
+import { Project, ProjectStatus, Industry } from '@/types';
 
 export const INITIAL_PROJECTS: Project[] = [
   {

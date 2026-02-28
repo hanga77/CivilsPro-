@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: pi-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: pi-construction
+
+  server:
+    build: ./server
+    container_name: pi-server
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    environment:
+      PORT: 5000
+      MONGODB_URI: mongodb://mongodb:27017/pi-construction
+      JWT_SECRET: ${JWT_SECRET:-pi-construction-jwt-secret-change-me}
+      CLIENT_ORIGIN: ${CLIENT_ORIGIN:-http://localhost}
+    volumes:
+      - uploads_data:/app/uploads
+
+  client:
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api}
+    container_name: pi-client
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+volumes:
+  mongo_data:
+  uploads_data:

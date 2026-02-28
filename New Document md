@@ -1,0 +1,250 @@
+Plan: Redesign UX/UI + Admin Complet + Watermark + Docker + MongoDB                                                  │
+│                                                                                                                      │
+│ Contexte                                                                                                             │
+│                                                                                                                      │
+│ Le site de PI-CONSTRUCTION BTP SARL nécessite un redesign complet UX/UI, un admin plus complet, un watermark logo    │
+│ sur les images galerie, la dockerisation du projet, et un README des tâches futures.                                 │
+│                                                                                                                      │
+│ État actuel : SPA monolithique (App.tsx 348 lignes), navigation par tabs, pas de routeur, pas de connexion au        │
+│ backend existant, pas de Docker.                                                                                     │
+│                                                                                                                      │
+│ ---                                                                                                                  │
+│ Phase 1 : Fondation & Architecture                                                                                   │
+│                                                                                                                      │
+│ 1.1 — Installer les dépendances (client/)                                                                            │
+│                                                                                                                      │
+│ - react-router-dom, axios, framer-motion, react-intersection-observer, react-hot-toast, recharts                     │
+│                                                                                                                      │
+│ 1.2 — Couche API (client/src/services/)                                                                              │
+│                                                                                                                      │
+│ - Créer api.ts (instance axios + intercepteur JWT)                                                                   │
+│ - Créer services CRUD : authService.ts, projectService.ts, industryService.ts, rentalService.ts, galleryService.ts,  │
+│ messageService.ts, configService.ts, uploadService.ts, teamService.ts, testimonialService.ts                         │
+│                                                                                                                      │
+│ 1.3 — Contexte Auth (client/src/context/AuthContext.tsx)                                                             │
+│                                                                                                                      │
+│ - Remplacer les credentials hardcodés par JWT via /api/auth/login                                                    │
+│ - Stocker token dans localStorage                                                                                    │
+│                                                                                                                      │
+│ 1.4 — React Router + Décomposition de App.tsx                                                                        │
+│                                                                                                                      │
+│ Routes :                                                                                                             │
+│ - / → HomePage, /expertise → ExpertisePage, /projets → ProjectsPage                                                  │
+│ - /materiel → RentalsPage, /contact → ContactPage, /galerie → GalleryPage                                            │
+│ - /admin → AdminLogin, /admin/* → AdminDashboard (protégé)                                                           │
+│                                                                                                                      │
+│ Extraire le JSX inline vers des composants page individuels.                                                         │
+│                                                                                                                      │
+│ 1.5 — Mettre à jour Layout.tsx                                                                                       │
+│                                                                                                                      │
+│ - <Link> au lieu de setActiveTab, useLocation() pour état actif                                                      │
+│                                                                                                                      │
+│ ---                                                                                                                  │
+│ Phase 2 : Redesign UI/UX — Pages Publiques                                                                           │
+│                                                                                                                      │
+│ 2.1 — Composants UI réutilisables (client/src/components/ui/)                                                        │
+│                                                                                                                      │
+│ ┌──────────────────────┬───────────────────────────────────────────────────────┐                                     │
+│ │      Composant       │                         Usage                         │                                     │
+│ ├──────────────────────┼───────────────────────────────────────────────────────┤                                     │
+│ │ SectionHeading.tsx   │ En-tête de section standardisé                        │                                     │
+│ ├──────────────────────┼───────────────────────────────────────────────────────┤                                     │
+│ │ AnimatedCounter.tsx  │ Compteur animé au scroll                              │                                     │
+│ ├──────────────────────┼───────────────────────────────────────────────────────┤                                     │
+│ │ ScrollReveal.tsx     │ Animation fade-in au scroll                           │                                     │
+│ ├──────────────────────┼───────────────────────────────────────────────────────┤                                     │
+│ │ ProjectCard.tsx      │ Carte projet avec badge statut + barre de progression │                                     │
+│ ├──────────────────────┼───────────────────────────────────────────────────────┤                                     │
+│ │ CTABanner.tsx        │ Bannière call-to-action                               │                                     │
+│ ├──────────────────────┼───────────────────────────────────────────────────────┤                                     │
+│ │ WatermarkedImage.tsx │ Image avec watermark logo CSS                         │                                     │
+│ ├──────────────────────┼───────────────────────────────────────────────────────┤                                     │
+│ │ TestimonialCard.tsx  │ Carte témoignage client                               │                                     │
+│ ├──────────────────────┼───────────────────────────────────────────────────────┤                                     │
+│ │ TeamMemberCard.tsx   │ Carte membre équipe                                   │                                     │
+│ ├──────────────────────┼───────────────────────────────────────────────────────┤                                     │
+│ │ FilterTabs.tsx       │ Filtres à onglets                                     │                                     │
+│ ├──────────────────────┼───────────────────────────────────────────────────────┤                                     │
+│ │ Modal.tsx            │ Dialog modal réutilisable                             │                                     │
+│ ├──────────────────────┼───────────────────────────────────────────────────────┤                                     │
+│ │ LoadingSpinner.tsx   │ Indicateur de chargement                              │                                     │
+│ ├──────────────────────┼───────────────────────────────────────────────────────┤                                     │
+│ │ ImageUpload.tsx      │ Upload d'image drag-and-drop                          │                                     │
+│ └──────────────────────┴───────────────────────────────────────────────────────┘                                     │
+│                                                                                                                      │
+│ 2.2 — Page d'Accueil redesignée                                                                                      │
+│                                                                                                                      │
+│ Sections dans l'ordre :                                                                                              │
+│ 1. Hero avec parallax                                                                                                │
+│ 2. Stats animés (compteurs)                                                                                          │
+│ 3. À propos / Qui sommes-nous                                                                                        │
+│ 4. Aperçu services (4 cartes vers /expertise)                                                                        │
+│ 5. Projets récents (3 derniers)                                                                                      │
+│ 6. Témoignages clients (carousel)                                                                                    │
+│ 7. Équipe (grille de cartes)                                                                                         │
+│ 8. CTA "Parlons de votre projet"                                                                                     │
+│ 9. Partenaires / Certifications                                                                                      │
+│                                                                                                                      │
+│ 2.3 — Page Projets                                                                                                   │
+│                                                                                                                      │
+│ - Filtres fonctionnels (Tout, En Cours, Terminé, par secteur)                                                        │
+│ - Barre de progression sur chaque carte                                                                              │
+│ - Modal détail avec galerie photos                                                                                   │
+│ - Before/After slider                                                                                                │
+│                                                                                                                      │
+│ 2.4 — Page Galerie (nouvelle)                                                                                        │
+│                                                                                                                      │
+│ - Grille masonry avec WatermarkedImage                                                                               │
+│ - Filtrage par catégorie/projet                                                                                      │
+│ - Lightbox au clic                                                                                                   │
+│                                                                                                                      │
+│ 2.5 — Page Expertise                                                                                                 │
+│                                                                                                                      │
+│ - Numérotation (01, 02, 03...)                                                                                       │
+│ - Détails expandables                                                                                                │
+│ - Timeline méthodologie                                                                                              │
+│                                                                                                                      │
+│ 2.6 — Page Matériel                                                                                                  │
+│                                                                                                                      │
+│ - Image pour chaque engin                                                                                            │
+│ - Badge disponibilité                                                                                                │
+│ - Bouton "Demander un devis"                                                                                         │
+│                                                                                                                      │
+│ 2.7 — Page Contact                                                                                                   │
+│                                                                                                                      │
+│ - Formulaire connecté à l'API                                                                                        │
+│ - Google Maps iframe                                                                                                 │
+│ - Toast notifications                                                                                                │
+│ - Bouton WhatsApp                                                                                                    │
+│                                                                                                                      │
+│ ---                                                                                                                  │
+│ Phase 3 : Ajouts Backend                                                                                             │
+│                                                                                                                      │
+│ 3.1 — Modèle TeamMember (server/src/models/TeamMember.ts)                                                            │
+│                                                                                                                      │
+│ - Fields : name, role, bio, photoUrl, order, socialLinks                                                             │
+│ - CRUD controller + routes                                                                                           │
+│                                                                                                                      │
+│ 3.2 — Modèle Testimonial (server/src/models/Testimonial.ts)                                                          │
+│                                                                                                                      │
+│ - Fields : clientName, clientRole, company, content, rating, avatarUrl, isVisible                                    │
+│ - CRUD controller + routes                                                                                           │
+│                                                                                                                      │
+│ 3.3 — Étendre Project                                                                                                │
+│                                                                                                                      │
+│ - Ajouter : beforeImage, afterImage, galleryImages[], endDate                                                        │
+│                                                                                                                      │
+│ 3.4 — Étendre GalleryItem                                                                                            │
+│                                                                                                                      │
+│ - Ajouter : projectId, description, uploadedAt                                                                       │
+│                                                                                                                      │
+│ 3.5 — Étendre RentalItem                                                                                             │
+│                                                                                                                      │
+│ - Ajouter : imageUrl, isAvailable                                                                                    │
+│                                                                                                                      │
+│ 3.6 — Enregistrer routes dans server/src/app.ts                                                                      │
+│                                                                                                                      │
+│ 3.7 — Mettre à jour seed + types frontend                                                                            │
+│                                                                                                                      │
+│ ---                                                                                                                  │
+│ Phase 4 : Admin Panel Complet                                                                                        │
+│                                                                                                                      │
+│ Décomposer AdminDashboard.tsx en sous-composants :                                                                   │
+│                                                                                                                      │
+│ ┌───────────────────────┬─────────────────────────────────────────────┐                                              │
+│ │        Fichier        │                  Fonction                   │                                              │
+│ ├───────────────────────┼─────────────────────────────────────────────┤                                              │
+│ │ AdminOverview.tsx     │ Dashboard stats + graphiques (recharts)     │                                              │
+│ ├───────────────────────┼─────────────────────────────────────────────┤                                              │
+│ │ AdminProjects.tsx     │ Table projets + upload before/after         │                                              │
+│ ├───────────────────────┼─────────────────────────────────────────────┤                                              │
+│ │ AdminIndustries.tsx   │ Gestion secteurs                            │                                              │
+│ ├───────────────────────┼─────────────────────────────────────────────┤                                              │
+│ │ AdminRentals.tsx      │ Gestion matériel                            │                                              │
+│ ├───────────────────────┼─────────────────────────────────────────────┤                                              │
+│ │ AdminMessages.tsx     │ Inbox messages                              │                                              │
+│ ├───────────────────────┼─────────────────────────────────────────────┤                                              │
+│ │ AdminGallery.tsx      │ Grille galerie + upload + preview watermark │                                              │
+│ ├───────────────────────┼─────────────────────────────────────────────┤                                              │
+│ │ AdminTeam.tsx         │ Gestion équipe                              │                                              │
+│ ├───────────────────────┼─────────────────────────────────────────────┤                                              │
+│ │ AdminTestimonials.tsx │ Gestion témoignages                         │                                              │
+│ ├───────────────────────┼─────────────────────────────────────────────┤                                              │
+│ │ AdminSiteConfig.tsx   │ Paramètres du site                          │                                              │
+│ └───────────────────────┴─────────────────────────────────────────────┘                                              │
+│                                                                                                                      │
+│ Route protégée via ProtectedRoute.tsx + AuthContext.                                                                 │
+│                                                                                                                      │
+│ ---                                                                                                                  │
+│ Phase 5 : Watermark Galerie                                                                                          │
+│                                                                                                                      │
+│ WatermarkedImage.tsx — Solution CSS pure                                                                             │
+│                                                                                                                      │
+│ - Logo semi-transparent en bas à droite (opacity-40)                                                                 │
+│ - Texte diagonal au centre (text-white/15, rotate(-30deg))                                                           │
+│ - pointer-events-none pour ne pas bloquer les interactions                                                           │
+│ - Logo provient de siteConfig.logoUrl                                                                                │
+│                                                                                                                      │
+│ Utilisé dans : Galerie publique, vignettes projets, détail projet.                                                   │
+│                                                                                                                      │
+│ ---                                                                                                                  │
+│ Phase 6 : Docker                                                                                                     │
+│                                                                                                                      │
+│ 6.1 — client/Dockerfile (multi-stage : node build → nginx)                                                           │
+│                                                                                                                      │
+│ 6.2 — client/nginx.conf (SPA fallback + proxy API)                                                                   │
+│                                                                                                                      │
+│ 6.3 — server/Dockerfile (node build → start)                                                                         │
+│                                                                                                                      │
+│ 6.4 — docker-compose.yml                                                                                             │
+│                                                                                                                      │
+│ services:                                                                                                            │
+│   mongodb:   # mongo:7, volume mongo_data                                                                            │
+│   server:    # build ./server, depends_on mongodb                                                                    │
+│   client:    # build ./client, depends_on server, port 80                                                            │
+│ volumes:                                                                                                             │
+│   mongo_data:                                                                                                        │
+│   uploads_data:                                                                                                      │
+│ 6.5 — .dockerignore (client + server)                                                                                │
+│                                                                                                                      │
+│ 6.6 — .env.example                                                                                                   │
+│                                                                                                                      │
+│ ---                                                                                                                  │
+│ Phase 7 : README Tâches Futures                                                                                      │
+│                                                                                                                      │
+│ Créer FUTURE_TASKS.md avec :                                                                                         │
+│ - Migration Tailwind CDN → build-time                                                                                │
+│ - i18n (FR/EN)                                                                                                       │
+│ - Notifications email (Nodemailer)                                                                                   │
+│ - Génération PDF rapports                                                                                            │
+│ - WebSocket temps réel                                                                                               │
+│ - Google Analytics                                                                                                   │
+│ - PWA + Service Worker                                                                                               │
+│ - Tests unitaires (Vitest/Jest) + E2E (Playwright)                                                                   │
+│ - CI/CD (GitHub Actions)                                                                                             │
+│ - Rate limiting API                                                                                                  │
+│ - Optimisation images (sharp)                                                                                        │
+│ - Blog/Actualités                                                                                                    │
+│ - RBAC (ingénieur vs admin)                                                                                          │
+│ - Suivi budget projets                                                                                               │
+│ - App mobile React Native                                                                                            │
+│                                                                                                                      │
+│ ---                                                                                                                  │
+│ Vérification                                                                                                         │
+│                                                                                                                      │
+│ 1. cd client && npm run dev → vérifier toutes les pages publiques                                                    │
+│ 2. cd server && npm run dev → vérifier API endpoints                                                                 │
+│ 3. Login admin → tester CRUD dans chaque section                                                                     │
+│ 4. Upload image galerie → vérifier watermark visible                                                                 │
+│ 5. docker-compose up --build → vérifier les 3 containers                                                             │
+│ 6. docker-compose exec server npm run seed → vérifier données initiales                                              │
+│                                                                                                                      │
+│ ---                                                                                                                  │
+│ Fichiers Critiques                                                                                                   │
+│                                                                                                                      │
+│ - client/src/App.tsx — Refactoring total (router + décomposition)                                                    │
+│ - client/src/components/admin/AdminDashboard.tsx — Split en 10+ sous-composants                                      │
+│ - client/src/types/index.ts — Nouvelles interfaces                                                                   │
+│ - server/src/app.ts — Nouvelles routes                                                                               │
+│ - server/src/models/Project.ts — Extension du schéma                                                                 │
+│ - docker-compose.yml — Nouveau fichier   

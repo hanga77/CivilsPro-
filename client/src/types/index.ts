@@ -15,9 +15,12 @@ export interface Project {
   budget: number;
   progress: number;
   startDate: string;
+  endDate?: string;
   thumbnail: string;
   description: string;
   sector: string;
+  beforeAfterImages?: { before: string; after: string; label?: string }[];
+  galleryImages?: string[];
 }
 
 export interface GalleryItem {
@@ -25,6 +28,9 @@ export interface GalleryItem {
   category: string;
   url: string;
   title: string;
+  projectId?: string;
+  description?: string;
+  uploadedAt?: string;
 }
 
 export interface RentalItem {
@@ -33,6 +39,8 @@ export interface RentalItem {
   icon: string;
   price: string;
   desc?: string;
+  imageUrl?: string;
+  isAvailable?: boolean;
 }
 
 export interface ContactMessage {
@@ -51,6 +59,30 @@ export interface Industry {
   icon: string;
   description: string;
   imageUrl: string;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  photoUrl: string;
+  order: number;
+  socialLinks?: {
+    linkedin?: string;
+    email?: string;
+  };
+}
+
+export interface Testimonial {
+  id: string;
+  clientName: string;
+  clientRole: string;
+  company: string;
+  content: string;
+  rating: number;
+  avatarUrl?: string;
+  isVisible: boolean;
 }
 
 export interface SiteConfig {
