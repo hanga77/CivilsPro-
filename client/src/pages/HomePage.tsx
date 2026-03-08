@@ -12,14 +12,15 @@ import AnimatedCounter from '@/components/ui/AnimatedCounter';
 import TestimonialCard from '@/components/ui/TestimonialCard';
 import TeamMemberCard from '@/components/ui/TeamMemberCard';
 import CTABanner from '@/components/ui/CTABanner';
+import WatermarkedImage from '@/components/ui/WatermarkedImage';
 
 const DEFAULT_CONFIG: SiteConfig = {
   companyName: 'PI-CONSTRUCTION', companySuffix: 'BTP SARL',
   slogan: "L'EXCELLENCE TECHNIQUE AU SERVICE DE L'INFRASTRUCTURE.",
   subSlogan: 'Ingénierie de précision, maîtrise du béton armé et solutions de construction durable pour les défis de demain.',
-  logoUrl: 'https://cdn-icons-png.flaticon.com/512/4322/4322992.png',
+  logoUrl: '/logo.svg',
   accentColor: '#FFB81C', primaryColor: '#001E42',
-  heroImage: 'https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=2070',
+  heroImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=2070',
   contactPhones: ['(+237) 671 34 54 41', '(+237) 699 46 63 21'],
   contactEmail: 'contact@piconstruction.cm', contactLocation: 'Douala - Yaoundé - Déploiement Afrique Centrale',
   footerAbout: '', stats: { projectsCount: '150+', expertiseYears: '12 ANS', teamSize: '45 EXPERTS' },
@@ -50,6 +51,7 @@ const HomePage: React.FC = () => {
         <div className="absolute inset-0 z-0">
           <img src={config.heroImage} className="w-full h-full object-cover opacity-60 scale-105 animate-slowZoom" alt="Hero" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#001E42] via-transparent to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-[#001E42]/70 via-transparent to-transparent"></div>
         </div>
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 w-full">
           <ScrollReveal>
@@ -109,7 +111,7 @@ const HomePage: React.FC = () => {
             </ScrollReveal>
             <ScrollReveal delay={0.2}>
               <div className="relative">
-                <img src="https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=1000" className="rounded-2xl shadow-2xl grayscale hover:grayscale-0 transition-all duration-1000" alt="Work" />
+                <img src="https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?auto=format&fit=crop&q=80&w=1000" className="rounded-2xl shadow-2xl grayscale hover:grayscale-0 transition-all duration-1000" alt="Work" />
                 <div className="absolute -bottom-10 -left-10 bg-[#FFB81C] p-10 hidden md:block rounded-xl shadow-xl">
                   <p className="text-4xl font-black text-[#001E42] italic">100%</p>
                   <p className="text-[8px] font-black uppercase tracking-widest text-[#001E42]">Projets Livrés à Temps</p>
@@ -133,7 +135,9 @@ const HomePage: React.FC = () => {
             {industries.slice(0, 4).map((ind, i) => (
               <ScrollReveal key={ind.id} delay={i * 0.1}>
                 <Link to="/expertise" className="block group relative h-[350px] overflow-hidden bg-slate-900 rounded-2xl">
-                  <img src={ind.imageUrl} className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700" alt={ind.title} />
+                  <div className="absolute inset-0">
+                    <WatermarkedImage src={ind.imageUrl} alt={ind.title} className="h-full opacity-40" />
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-[#001E42] via-transparent to-transparent"></div>
                   <div className="absolute bottom-0 left-0 p-8">
                     <div className="w-12 h-12 bg-[#FFB81C] flex items-center justify-center text-[#001E42] text-xl mb-4">
@@ -167,8 +171,8 @@ const HomePage: React.FC = () => {
               <ScrollReveal key={p.id} delay={i * 0.15}>
                 <Link to="/projets" className="block group bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-2xl transition-all">
                   <div className="h-64 overflow-hidden relative">
-                    <img src={p.thumbnail} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={p.name} />
-                    <div className="absolute top-4 left-4 bg-[#FFB81C] text-[#001E42] px-4 py-1 text-[9px] font-black uppercase tracking-widest">{p.sector}</div>
+                    <WatermarkedImage src={p.thumbnail} alt={p.name} className="h-full" />
+                    <div className="absolute top-4 left-4 bg-[#FFB81C] text-[#001E42] px-4 py-1 text-[9px] font-black uppercase tracking-widest z-10">{p.sector}</div>
                   </div>
                   <div className="p-6">
                     <h3 className="text-lg font-black text-[#001E42] uppercase tracking-tight mb-2">{p.name}</h3>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TeamMember } from '@/types';
 import { teamService } from '@/services/teamService';
 import Modal from '@/components/ui/Modal';
+import ImageInput from '@/components/ui/ImageInput';
 import toast from 'react-hot-toast';
 
 const AdminTeam: React.FC = () => {
@@ -58,7 +59,7 @@ const AdminTeam: React.FC = () => {
             <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Nom</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.name || ''} onChange={e => setForm({ ...form, name: e.target.value })} required /></div>
             <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Rôle</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.role || ''} onChange={e => setForm({ ...form, role: e.target.value })} required /></div>
           </div>
-          <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">URL Photo</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.photoUrl || ''} onChange={e => setForm({ ...form, photoUrl: e.target.value })} /></div>
+          <ImageInput label="Photo du membre" value={form.photoUrl || ''} onChange={url => setForm({ ...form, photoUrl: url })} />
           <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Bio</label><textarea rows={3} className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.bio || ''} onChange={e => setForm({ ...form, bio: e.target.value })}></textarea></div>
           <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Ordre d'affichage</label><input type="number" className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.order ?? 0} onChange={e => setForm({ ...form, order: Number(e.target.value) })} /></div>
           <div className="flex gap-4 pt-4">

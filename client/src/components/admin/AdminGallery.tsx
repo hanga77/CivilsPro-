@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GalleryItem } from '@/types';
 import { galleryService } from '@/services/galleryService';
 import Modal from '@/components/ui/Modal';
+import ImageInput from '@/components/ui/ImageInput';
 import WatermarkedImage from '@/components/ui/WatermarkedImage';
 import toast from 'react-hot-toast';
 
@@ -15,6 +16,7 @@ const AdminGallery: React.FC = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.url) { toast.error('Veuillez ajouter une image'); return; }
     try { await galleryService.create(form); toast.success('Ajouté'); setIsModalOpen(false); load(); }
     catch { toast.error('Erreur'); }
   };
@@ -50,8 +52,8 @@ const AdminGallery: React.FC = () => {
         <form onSubmit={handleSave} className="space-y-4">
           <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Titre</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.title || ''} onChange={e => setForm({ ...form, title: e.target.value })} required /></div>
           <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Catégorie</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.category || ''} onChange={e => setForm({ ...form, category: e.target.value })} required /></div>
-          <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">URL Image</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.url || ''} onChange={e => setForm({ ...form, url: e.target.value })} required /></div>
-          <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Description</label><textarea rows={3} className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.description || ''} onChange={e => setForm({ ...form, description: e.target.value })}></textarea></div>
+          <ImageInput label="Image de la galerie" value={form.url || ''} onChange={url => setForm({ ...form, url })} />
+          <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Description (optionnel)</label><textarea rows={3} className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.description || ''} onChange={e => setForm({ ...form, description: e.target.value })}></textarea></div>
           {form.url && (
             <div>
               <p className="text-[9px] font-black text-slate-400 uppercase mb-2">Aperçu avec Watermark</p>

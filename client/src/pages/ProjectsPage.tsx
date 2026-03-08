@@ -72,17 +72,41 @@ const ProjectsPage: React.FC = () => {
               <WatermarkedImage src={selectedProject.thumbnail} alt={selectedProject.name} className="h-full" />
             </div>
 
-            {/* Before/After */}
-            {selectedProject.beforeImage && selectedProject.afterImage && (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Avant</p>
-                  <img src={selectedProject.beforeImage} alt="Avant" className="w-full h-48 object-cover rounded-xl" />
-                </div>
-                <div>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Après</p>
-                  <img src={selectedProject.afterImage} alt="Après" className="w-full h-48 object-cover rounded-xl" />
-                </div>
+            {/* Before/After pairs */}
+            {selectedProject.beforeAfterImages && selectedProject.beforeAfterImages.length > 0 && (
+              <div className="space-y-6">
+                <p className="text-[9px] font-black text-[#FFB81C] uppercase tracking-widest flex items-center gap-2">
+                  <i className="fas fa-arrow-right-arrow-left"></i>
+                  Évolution du Chantier ({selectedProject.beforeAfterImages.length} phase{selectedProject.beforeAfterImages.length > 1 ? 's' : ''})
+                </p>
+                {selectedProject.beforeAfterImages.map((pair, idx) => (
+                  <div key={idx} className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                    {pair.label && (
+                      <p className="text-[10px] font-black text-[#001E42] uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <span className="w-5 h-5 bg-[#001E42] text-white text-[8px] rounded-full flex items-center justify-center">{idx + 1}</span>
+                        {pair.label}
+                      </p>
+                    )}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-[8px] font-black text-red-400 uppercase tracking-widest mb-2 flex items-center gap-1">
+                          <i className="fas fa-arrow-left"></i> Avant
+                        </p>
+                        <div className="rounded-xl overflow-hidden h-48 bg-slate-200">
+                          <WatermarkedImage src={pair.before} alt={`Avant ${pair.label || idx + 1}`} className="h-full" />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[8px] font-black text-green-500 uppercase tracking-widest mb-2 flex items-center gap-1">
+                          <i className="fas fa-arrow-right"></i> Après
+                        </p>
+                        <div className="rounded-xl overflow-hidden h-48 bg-slate-200">
+                          <WatermarkedImage src={pair.after} alt={`Après ${pair.label || idx + 1}`} className="h-full" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 

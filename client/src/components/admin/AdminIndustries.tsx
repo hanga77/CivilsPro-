@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Industry } from '@/types';
 import { industryService } from '@/services/industryService';
 import Modal from '@/components/ui/Modal';
+import ImageInput from '@/components/ui/ImageInput';
 import toast from 'react-hot-toast';
 
 const AdminIndustries: React.FC = () => {
@@ -54,7 +55,7 @@ const AdminIndustries: React.FC = () => {
         <form onSubmit={handleSave} className="space-y-4">
           <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Titre</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.title || ''} onChange={e => setForm({ ...form, title: e.target.value })} required /></div>
           <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Icône FA (ex: fa-bridge)</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.icon || ''} onChange={e => setForm({ ...form, icon: e.target.value })} /></div>
-          <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">URL Image</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.imageUrl || ''} onChange={e => setForm({ ...form, imageUrl: e.target.value })} /></div>
+          <ImageInput label="Image du secteur" value={form.imageUrl || ''} onChange={url => setForm({ ...form, imageUrl: url })} />
           <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Description</label><textarea rows={4} className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.description || ''} onChange={e => setForm({ ...form, description: e.target.value })}></textarea></div>
           <div className="flex gap-4 pt-4">
             <button type="submit" className="flex-grow py-4 bg-[#FFB81C] text-[#001E42] font-black uppercase text-xs rounded-xl shadow-lg">Enregistrer</button>

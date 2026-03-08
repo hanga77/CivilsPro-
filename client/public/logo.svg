@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="16" fill="#001E42"/>
+  <text x="100" y="125" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-weight="900" font-size="100" fill="#FFB81C" letter-spacing="-4">PI</text>
+  <rect x="30" y="150" width="140" height="3" rx="1.5" fill="#FFB81C" opacity="0.6"/>
+</svg>

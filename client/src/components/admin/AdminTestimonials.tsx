@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Testimonial } from '@/types';
 import { testimonialService } from '@/services/testimonialService';
 import Modal from '@/components/ui/Modal';
+import ImageInput from '@/components/ui/ImageInput';
 import toast from 'react-hot-toast';
 
 const AdminTestimonials: React.FC = () => {
@@ -61,7 +62,7 @@ const AdminTestimonials: React.FC = () => {
             <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Note (1-5)</label><input type="number" min="1" max="5" className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.rating || 5} onChange={e => setForm({ ...form, rating: Number(e.target.value) })} /></div>
           </div>
           <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Contenu</label><textarea rows={4} className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.content || ''} onChange={e => setForm({ ...form, content: e.target.value })} required></textarea></div>
-          <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">URL Avatar</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.avatarUrl || ''} onChange={e => setForm({ ...form, avatarUrl: e.target.value })} /></div>
+          <ImageInput label="Avatar du client" value={form.avatarUrl || ''} onChange={url => setForm({ ...form, avatarUrl: url })} previewHeight="h-20" />
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" checked={form.isVisible !== false} onChange={e => setForm({ ...form, isVisible: e.target.checked })} className="w-4 h-4" />
             <span className="text-[9px] font-black text-slate-400 uppercase">Visible sur le site</span>

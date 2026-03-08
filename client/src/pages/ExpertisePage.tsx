@@ -4,6 +4,7 @@ import { Industry } from '@/types';
 import { INDUSTRIES } from '@/lib/constants';
 import { industryService } from '@/services/industryService';
 import ScrollReveal from '@/components/ui/ScrollReveal';
+import WatermarkedImage from '@/components/ui/WatermarkedImage';
 import CTABanner from '@/components/ui/CTABanner';
 
 const ExpertisePage: React.FC = () => {
@@ -54,7 +55,9 @@ const ExpertisePage: React.FC = () => {
             {industries.map((ind, i) => (
               <ScrollReveal key={ind.id} delay={i * 0.1}>
                 <div className="group relative h-[450px] overflow-hidden bg-slate-900 rounded-3xl border border-white/5 hover:border-[#FFB81C]/50 transition-all duration-500">
-                  <img src={ind.imageUrl} className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:scale-105 transition-transform duration-700" alt={ind.title} />
+                  <div className="absolute inset-0">
+                    <WatermarkedImage src={ind.imageUrl} alt={ind.title} className="h-full opacity-30" />
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-[#001E42] via-[#001E42]/50 to-transparent"></div>
                   <div className="absolute bottom-0 left-0 p-12">
                     <span className="text-6xl font-black text-white/10 italic absolute top-6 right-8">

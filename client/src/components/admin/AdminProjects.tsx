@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Project, ProjectStatus } from '@/types';
 import { projectService } from '@/services/projectService';
 import Modal from '@/components/ui/Modal';
+import ImageInput from '@/components/ui/ImageInput';
 import toast from 'react-hot-toast';
 
 interface BeforeAfterPair {
@@ -99,7 +100,6 @@ const AdminProjects: React.FC = () => {
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editing ? 'Modifier Projet' : 'Nouveau Projet'} maxWidth="max-w-3xl">
         <form onSubmit={handleSave} className="space-y-5">
-          {/* Infos de base */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-[9px] font-black text-slate-400 uppercase">Nom</label>
@@ -137,17 +137,15 @@ const AdminProjects: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="text-[9px] font-black text-slate-400 uppercase">URL Miniature</label>
-            <input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.thumbnail || ''} onChange={e => setForm({ ...form, thumbnail: e.target.value })} />
-          </div>
+          {/* Miniature — upload */}
+          <ImageInput label="Miniature du projet" value={form.thumbnail || ''} onChange={url => setForm({ ...form, thumbnail: url })} />
 
           <div className="space-y-1">
             <label className="text-[9px] font-black text-slate-400 uppercase">Description</label>
             <textarea rows={3} className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.description || ''} onChange={e => setForm({ ...form, description: e.target.value })}></textarea>
           </div>
 
-          {/* AVANT / APRÈS — section dynamique */}
+          {/* AVANT / APRÈS */}
           <div className="border-t border-slate-200 pt-5">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -155,14 +153,10 @@ const AdminProjects: React.FC = () => {
                   <i className="fas fa-images text-[#FFB81C]"></i>
                   Photos Avant / Après
                 </h4>
-                <p className="text-[9px] text-slate-400 font-bold">Ajoutez plusieurs paires de photos pour montrer l'évolution du chantier</p>
+                <p className="text-[9px] text-slate-400 font-bold">Ajoutez plusieurs paires pour montrer l'évolution du chantier</p>
               </div>
-              <button
-                type="button"
-                onClick={addPair}
-                className="px-4 py-2 bg-[#FFB81C] text-[#001E42] font-black uppercase text-[9px] rounded-lg hover:bg-yellow-400 transition-all flex items-center gap-1"
-              >
-                <i className="fas fa-plus text-[8px]"></i> Ajouter une paire
+              <button type="button" onClick={addPair} className="px-4 py-2 bg-[#FFB81C] text-[#001E42] font-black uppercase text-[9px] rounded-lg hover:bg-yellow-400 transition-all flex items-center gap-1">
+                <i className="fas fa-plus text-[8px]"></i> Ajouter
               </button>
             </div>
 
@@ -170,14 +164,12 @@ const AdminProjects: React.FC = () => {
               <div className="text-center py-8 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
                 <i className="fas fa-arrow-right-arrow-left text-2xl text-slate-300 mb-2"></i>
                 <p className="text-[10px] font-black text-slate-400 uppercase">Aucune paire avant/après</p>
-                <p className="text-[9px] text-slate-300">Cliquez sur "Ajouter une paire" pour commencer</p>
               </div>
             )}
 
             <div className="space-y-4">
               {beforeAfterPairs.map((pair, idx) => (
-                <div key={idx} className="p-4 bg-slate-50 rounded-xl border border-slate-200 relative">
-                  {/* Header de la paire */}
+                <div key={idx} className="p-4 bg-slate-50 rounded-xl border border-slate-200">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <span className="w-6 h-6 bg-[#001E42] text-white text-[9px] font-black rounded-full flex items-center justify-center">{idx + 1}</span>
@@ -188,49 +180,13 @@ const AdminProjects: React.FC = () => {
                         onChange={e => updatePair(idx, 'label', e.target.value)}
                       />
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => removePair(idx)}
-                      className="w-7 h-7 flex items-center justify-center bg-red-50 rounded-lg text-red-400 hover:bg-red-500 hover:text-white transition-all"
-                    >
+                    <button type="button" onClick={() => removePair(idx)} className="w-7 h-7 flex items-center justify-center bg-red-50 rounded-lg text-red-400 hover:bg-red-500 hover:text-white transition-all">
                       <i className="fas fa-trash text-[9px]"></i>
                     </button>
                   </div>
-
-                  {/* Inputs avant / après */}
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1">
-                      <label className="text-[8px] font-black text-red-400 uppercase flex items-center gap-1">
-                        <i className="fas fa-arrow-left"></i> Avant
-                      </label>
-                      <input
-                        className="w-full bg-white p-3 rounded-lg border border-slate-200 text-xs"
-                        placeholder="URL de l'image avant"
-                        value={pair.before}
-                        onChange={e => updatePair(idx, 'before', e.target.value)}
-                      />
-                      {pair.before && (
-                        <div className="h-24 rounded-lg overflow-hidden bg-slate-200 mt-1">
-                          <img src={pair.before} alt="Avant" className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[8px] font-black text-green-500 uppercase flex items-center gap-1">
-                        <i className="fas fa-arrow-right"></i> Après
-                      </label>
-                      <input
-                        className="w-full bg-white p-3 rounded-lg border border-slate-200 text-xs"
-                        placeholder="URL de l'image après"
-                        value={pair.after}
-                        onChange={e => updatePair(idx, 'after', e.target.value)}
-                      />
-                      {pair.after && (
-                        <div className="h-24 rounded-lg overflow-hidden bg-slate-200 mt-1">
-                          <img src={pair.after} alt="Après" className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                    </div>
+                    <ImageInput label="Avant" value={pair.before} onChange={url => updatePair(idx, 'before', url)} previewHeight="h-24" />
+                    <ImageInput label="Après" value={pair.after} onChange={url => updatePair(idx, 'after', url)} previewHeight="h-24" />
                   </div>
                 </div>
               ))}

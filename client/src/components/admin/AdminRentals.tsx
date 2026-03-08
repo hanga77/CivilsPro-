@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { RentalItem } from '@/types';
 import { rentalService } from '@/services/rentalService';
 import Modal from '@/components/ui/Modal';
+import ImageInput from '@/components/ui/ImageInput';
 import toast from 'react-hot-toast';
 
 const AdminRentals: React.FC = () => {
@@ -37,7 +38,11 @@ const AdminRentals: React.FC = () => {
         {items.map(item => (
           <div key={item.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200 group">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-[#001E42] flex items-center justify-center text-[#FFB81C]"><i className={`fas ${item.icon}`}></i></div>
+              {item.imageUrl ? (
+                <div className="w-12 h-12 rounded-lg bg-slate-200 overflow-hidden"><img src={item.imageUrl} className="w-full h-full object-cover" alt="" /></div>
+              ) : (
+                <div className="w-12 h-12 rounded-lg bg-[#001E42] flex items-center justify-center text-[#FFB81C]"><i className={`fas ${item.icon}`}></i></div>
+              )}
               <div>
                 <p className="font-black text-xs text-[#001E42] uppercase">{item.name}</p>
                 <p className="text-[9px] text-slate-400 font-bold uppercase">{item.price}</p>
@@ -62,7 +67,7 @@ const AdminRentals: React.FC = () => {
             <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Icône FA</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.icon || ''} onChange={e => setForm({ ...form, icon: e.target.value })} required /></div>
             <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Prix</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.price || ''} onChange={e => setForm({ ...form, price: e.target.value })} required /></div>
           </div>
-          <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">URL Image</label><input className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.imageUrl || ''} onChange={e => setForm({ ...form, imageUrl: e.target.value })} /></div>
+          <ImageInput label="Photo de l'engin" value={form.imageUrl || ''} onChange={url => setForm({ ...form, imageUrl: url })} />
           <div className="space-y-1"><label className="text-[9px] font-black text-slate-400 uppercase">Description</label><textarea rows={3} className="w-full bg-slate-50 p-4 rounded-xl border border-slate-200" value={form.desc || ''} onChange={e => setForm({ ...form, desc: e.target.value })}></textarea></div>
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" checked={form.isAvailable !== false} onChange={e => setForm({ ...form, isAvailable: e.target.checked })} className="w-4 h-4" />

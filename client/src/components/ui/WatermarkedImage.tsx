@@ -12,7 +12,7 @@ interface WatermarkedImageProps {
 const WatermarkedImage: React.FC<WatermarkedImageProps> = ({
   src,
   alt,
-  logoUrl = 'https://cdn-icons-png.flaticon.com/512/4322/4322992.png',
+  logoUrl = '/logo.svg',
   companyName = 'PI-CONSTRUCTION',
   className = '',
   onClick,

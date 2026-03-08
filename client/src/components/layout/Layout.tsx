@@ -7,7 +7,7 @@ import useSEO from '@/hooks/useSEO';
 const DEFAULT_CONFIG: SiteConfig = {
   companyName: 'PI-CONSTRUCTION', companySuffix: 'BTP SARL',
   slogan: '', subSlogan: '',
-  logoUrl: 'https://cdn-icons-png.flaticon.com/512/4322/4322992.png',
+  logoUrl: '/logo.svg',
   accentColor: '#FFB81C', primaryColor: '#001E42', heroImage: '',
   contactPhones: ['(+237) 671 34 54 41', '(+237) 699 46 63 21'],
   contactEmail: 'contact@piconstruction.cm',
@@ -74,7 +74,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <div className="min-h-screen flex flex-col bg-white text-slate-900">
       {/* HEADER */}
       <header className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
-        scrolled || isFocusMode || isAdmin ? 'bg-[#001E42] py-2 shadow-2xl' : 'bg-transparent py-6'
+        scrolled || isFocusMode || isAdmin ? 'bg-[#001E42] py-2 shadow-2xl' : 'bg-[#001E42]/50 backdrop-blur-md py-6'
       }`}>
         <nav className="max-w-[1400px] mx-auto px-6 flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-4 group">

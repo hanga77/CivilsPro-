@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { RentalItem } from '@/types';
 import { rentalService } from '@/services/rentalService';
 import ScrollReveal from '@/components/ui/ScrollReveal';
+import WatermarkedImage from '@/components/ui/WatermarkedImage';
 import CTABanner from '@/components/ui/CTABanner';
 
 const INITIAL_RENTALS: RentalItem[] = [
@@ -47,7 +48,7 @@ const RentalsPage: React.FC = () => {
                   {/* Image or Icon */}
                   {r.imageUrl ? (
                     <div className="w-32 h-32 rounded-2xl overflow-hidden mb-8">
-                      <img src={r.imageUrl} alt={r.name} className="w-full h-full object-cover" />
+                      <WatermarkedImage src={r.imageUrl} alt={r.name} className="h-full" />
                     </div>
                   ) : (
                     <div className="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-10 group-hover:bg-[#FFB81C] transition-all duration-500">

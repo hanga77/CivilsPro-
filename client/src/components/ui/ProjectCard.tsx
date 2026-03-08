@@ -1,5 +1,6 @@
 import React from 'react';
 import { Project } from '@/types';
+import WatermarkedImage from '@/components/ui/WatermarkedImage';
 
 interface ProjectCardProps {
   project: Project;
@@ -11,8 +12,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, reverse = f
   return (
     <div className={`flex flex-col ${reverse ? 'lg:flex-row-reverse' : 'lg:flex-row'} bg-white group shadow-xl overflow-hidden rounded-[2rem] cursor-pointer`} onClick={onClick}>
       <div className="lg:w-1/2 h-[400px] lg:h-[500px] overflow-hidden relative">
-        <img src={project.thumbnail} className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110" alt={project.name} />
-        <div className="absolute top-8 left-8 bg-[#FFB81C] text-[#001E42] px-6 py-2 text-[10px] font-black uppercase tracking-widest">{project.sector}</div>
+        <WatermarkedImage src={project.thumbnail} alt={project.name} className="h-full" />
+        <div className="absolute top-8 left-8 bg-[#FFB81C] text-[#001E42] px-6 py-2 text-[10px] font-black uppercase tracking-widest z-10">{project.sector}</div>
       </div>
       <div className="flex-grow p-10 lg:p-16 flex flex-col justify-center bg-white">
         <div className="flex items-center gap-6 mb-6">

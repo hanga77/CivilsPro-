@@ -12,6 +12,7 @@ import GalleryPage from '@/pages/GalleryPage';
 import ContactPage from '@/pages/ContactPage';
 import AdminLogin from '@/pages/AdminLogin';
 import AdminDashboard from '@/components/admin/AdminDashboard';
+import NotFoundPage from '@/pages/NotFoundPage';
 
 const App: React.FC = () => {
   return (
@@ -35,6 +36,7 @@ const App: React.FC = () => {
                 <AdminDashboard />
               </ProtectedRoute>
             } />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Layout>
       </AuthProvider>
