@@ -5,6 +5,8 @@ import ScrollReveal from '@/components/ui/ScrollReveal';
 import WatermarkedImage from '@/components/ui/WatermarkedImage';
 import FilterTabs from '@/components/ui/FilterTabs';
 import Modal from '@/components/ui/Modal';
+import PageBanner from '@/components/ui/PageBanner';
+import CTABanner from '@/components/ui/CTABanner';
 
 const GalleryPage: React.FC = () => {
   const [items, setItems] = useState<GalleryItem[]>([
@@ -27,15 +29,17 @@ const GalleryPage: React.FC = () => {
 
   return (
     <div className="animate-fadeIn">
-      <div className="pt-40 pb-32 bg-[#020617] min-h-screen">
-        <div className="max-w-[1400px] mx-auto px-6">
-          <ScrollReveal>
-            <header className="mb-16 text-center">
-              <h4 className="text-[10px] font-black text-[#FFB81C] uppercase tracking-[0.4em] mb-4">Portfolio Visuel</h4>
-              <h2 className="text-6xl md:text-8xl font-black italic text-white uppercase tracking-tighter leading-none">Notre <span className="text-[#FFB81C]">Galerie.</span></h2>
-            </header>
-          </ScrollReveal>
+      <PageBanner
+        label="Portfolio Visuel"
+        title="Notre"
+        titleAccent="Galerie."
+        description="Découvrez en images l'étendue de nos réalisations — chantiers, ouvrages d'art et infrastructures à travers le Cameroun."
+        breadcrumb="Galerie"
+        bgImage="https://images.unsplash.com/photo-1503387762-592dee58c460?auto=format&fit=crop&q=80&w=2070"
+      />
 
+      <div className="bg-[#020617] pb-32">
+        <div className="max-w-[1400px] mx-auto px-6 pt-16">
           <ScrollReveal>
             <div className="flex justify-center mb-12">
               <FilterTabs filters={categories} activeFilter={filter} onFilterChange={setFilter} />
@@ -76,6 +80,8 @@ const GalleryPage: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      <CTABanner />
     </div>
   );
 };

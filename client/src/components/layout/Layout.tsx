@@ -69,17 +69,33 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const isFocusMode = location.pathname === '/contact';
   const isAdmin = location.pathname.startsWith('/admin');
+  const isHomePage = location.pathname === '/';
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-slate-900">
       {/* HEADER */}
       <header className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
-        scrolled || isFocusMode || isAdmin ? 'bg-[#001E42] py-2 shadow-2xl' : 'bg-[#001E42]/50 backdrop-blur-md py-6'
+        scrolled || isFocusMode || isAdmin || !isHomePage ? 'bg-[#001E42] py-2 shadow-2xl' : 'bg-[#001E42]/50 backdrop-blur-md py-6'
       }`}>
         <nav className="max-w-[1400px] mx-auto px-6 flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-4 group">
-            <div className="w-12 h-12 bg-white flex items-center justify-center p-1 rounded-sm shadow-xl transition-transform group-hover:scale-105">
-              <img src={config.logoUrl} className="w-full h-full object-contain" alt="Logo" />
+            <div className="w-12 h-12 bg-[#001E42] border-2 border-[#FFB81C] flex items-center justify-center rounded-sm shadow-xl transition-transform group-hover:scale-105 overflow-hidden">
+              <img
+                src={config.logoUrl}
+                className="w-full h-full object-contain"
+                alt="Logo PI-CONSTRUCTION"
+                onError={(e) => {
+                  const el = e.currentTarget;
+                  el.style.display = 'none';
+                  const parent = el.parentElement;
+                  if (parent && !parent.querySelector('.logo-fallback')) {
+                    const fb = document.createElement('span');
+                    fb.className = 'logo-fallback text-[#FFB81C] font-black text-xl italic';
+                    fb.textContent = 'PI';
+                    parent.appendChild(fb);
+                  }
+                }}
+              />
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-black tracking-tighter leading-none uppercase text-white">{config.companyName}</span>

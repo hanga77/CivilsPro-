@@ -8,6 +8,7 @@ import FilterTabs from '@/components/ui/FilterTabs';
 import Modal from '@/components/ui/Modal';
 import WatermarkedImage from '@/components/ui/WatermarkedImage';
 import CTABanner from '@/components/ui/CTABanner';
+import PageBanner from '@/components/ui/PageBanner';
 
 const ProjectsPage: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
@@ -29,21 +30,27 @@ const ProjectsPage: React.FC = () => {
 
   return (
     <div className="animate-fadeIn">
-      <div className="pt-40 pb-32 bg-slate-50 min-h-screen">
-        <div className="max-w-[1400px] mx-auto px-6">
-          <ScrollReveal>
-            <header className="mb-20 flex flex-col md:flex-row justify-between items-end gap-10">
-              <div>
-                <h2 className="text-6xl font-black italic text-[#001E42] uppercase tracking-tighter mb-4 leading-none">Portfolio <br /><span className="text-[#FFB81C]">Infrastructures.</span></h2>
-                <p className="text-slate-500 font-bold text-sm uppercase tracking-widest">Preuves tangibles de notre expertise sur le terrain.</p>
-              </div>
-              <FilterTabs filters={statusFilters} activeFilter={filter} onFilterChange={setFilter} />
-            </header>
-          </ScrollReveal>
+      <PageBanner
+        label="Preuves de terrain"
+        title="Portfolio"
+        titleAccent="Infrastructures."
+        description="Chaque projet est une démonstration concrète de notre maîtrise technique et de notre engagement envers l'excellence."
+        breadcrumb="Réalisations"
+        bgImage="https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=2070"
+        stats={[
+          { value: '150+', label: 'Projets réalisés' },
+          { value: '12 ANS', label: "d'expérience" },
+          { value: '100%', label: 'Livrés dans les délais' },
+          { value: '3', label: 'Pays couverts' },
+        ]}
+      />
 
-          {/* Sector filters */}
+      <div className="bg-slate-50 pb-32">
+        <div className="max-w-[1400px] mx-auto px-6 pt-16">
+          {/* Filters */}
           <ScrollReveal>
-            <div className="mb-12">
+            <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mb-12">
+              <FilterTabs filters={statusFilters} activeFilter={filter} onFilterChange={setFilter} />
               <FilterTabs filters={sectors} activeFilter={filter} onFilterChange={setFilter} />
             </div>
           </ScrollReveal>
